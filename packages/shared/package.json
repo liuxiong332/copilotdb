@@ -1,0 +1,21 @@
+{
+    "name": "@database-gui/shared",
+    "version": "1.0.0",
+    "description": "Shared utilities and constants for database GUI client",
+    "main": "index.ts",
+    "types": "index.ts",
+    "scripts": {
+        "type-check": "tsc --noEmit",
+        "build": "tsc",
+        "clean": "rm -rf dist"
+    },
+    "dependencies": {
+        "@database-gui/types": "1.0.0"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    }
+}

@@ -1,0 +1,61 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "ES6"
+        ],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "incremental": true,
+        "plugins": [
+            {
+                "name": "next"
+            }
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@/shared/*": [
+                "./packages/shared/src/*"
+            ],
+            "@/types/*": [
+                "./packages/types/src/*"
+            ],
+            "@database-gui/types": [
+                "./packages/types/src/index.ts"
+            ],
+            "@database-gui/types/*": [
+                "./packages/types/src/*"
+            ],
+            "@database-gui/shared": [
+                "./packages/shared/src/index.ts"
+            ],
+            "@database-gui/shared/*": [
+                "./packages/shared/src/*"
+            ]
+        }
+    },
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts",
+        "packages/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
