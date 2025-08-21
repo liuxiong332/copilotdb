@@ -19,3 +19,6 @@ export * from './ui';
 
 // API response types
 export * from './api';
+
+// Supabase generated types
+export * from './supabase';

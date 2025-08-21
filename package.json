@@ -13,9 +13,20 @@
         "test": "turbo run test",
         "lint": "turbo run lint",
         "type-check": "turbo run type-check",
-        "clean": "turbo run clean"
+        "clean": "turbo run clean",
+        "db:setup": "./scripts/setup-database.sh",
+        "db:start": "npx supabase start",
+        "db:stop": "npx supabase stop",
+        "db:status": "npx supabase status",
+        "db:reset": "npx supabase db reset",
+        "db:migrate": "npx supabase db push",
+        "db:generate-types": "npx supabase gen types typescript --local > packages/types/src/supabase.ts",
+        "db:validate": "node scripts/validate-schema.js",
+        "test:db": "jest tests/database-setup.test.js"
     },
     "devDependencies": {
+        "jest": "^30.0.5",
+        "supabase": "^2.34.3",
         "turbo": "^1.13.4",
         "typescript": "^5.9.2"
     },

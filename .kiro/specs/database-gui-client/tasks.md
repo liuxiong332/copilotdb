@@ -6,38 +6,41 @@
   - Set up TypeScript configurations and shared type definitions
   - _Requirements: 9.1, 9.3_
 
-- [ ] 2. Configure Supabase backend infrastructure
+- [x] 2. Configure Supabase backend infrastructure
   - Set up Supabase database schema with RLS policies for user profiles, connections, query history
   - Create database migration files for all application tables
   - Configure Supabase Auth with email/password and OAuth providers
   - Test Supabase local development setup and database connectivity
   - _Requirements: 7.1, 7.2, 7.3, 10.1, 10.4_
 
-- [ ] 3. Implement core database connection interfaces and types
+- [ ] 3. Implement client core database connection interfaces and types
   - Create TypeScript interfaces for DatabaseConnection, ConnectionConfig, and QueryResult
   - Implement database type definitions for MongoDB, MySQL, PostgreSQL, SQLite
   - Create shared validation schemas for connection configurations
+  - Create database client wrapper classes for each database type (using native drivers)
   - Write unit tests for type definitions and validation logic
   - _Requirements: 1.1, 1.2, 3.1_
 
-- [ ] 4. Build Supabase Edge Functions for database operations
-- [ ] 4.1 Create database connection Edge Function
-  - Implement Edge Function to test and establish database connections
-  - Add support for all four database types (MongoDB, MySQL, PostgreSQL, SQLite)
+- [ ] 4. Implement database client services in applications
+- [ ] 4.1 Create database connection service
+  - Implement client-side database connection logic for all platforms
+  - Add support for all four database types using native drivers (mongodb, mysql2, pg, sqlite3)
   - Implement connection validation and error handling
+  - Create connection pooling and management for active connections
   - Write tests for connection functionality across all database types
   - _Requirements: 1.1, 1.2, 1.3, 1.5_
 
-- [ ] 4.2 Create database schema retrieval Edge Function
-  - Implement Edge Function to fetch database schemas and table structures
-  - Handle different schema formats for each database type
+- [ ] 4.2 Create database schema service
+  - Implement client-side schema retrieval from external databases
+  - Handle different schema formats for each database type (SQL INFORMATION_SCHEMA, MongoDB collections)
   - Add caching mechanism for schema data to improve performance
+  - Create schema refresh and update mechanisms
   - Write tests for schema retrieval across all database types
   - _Requirements: 2.1, 2.2_
 
-- [ ] 4.3 Create query execution Edge Function
-  - Implement Edge Function for executing SQL/MongoDB queries
-  - Add query validation and syntax checking
+- [ ] 4.3 Create query execution service
+  - Implement client-side query execution for SQL/MongoDB queries
+  - Add query validation and syntax checking for each database type
   - Implement result pagination and limiting for large datasets
   - Add query execution time tracking and error handling
   - Write comprehensive tests for query execution
@@ -213,7 +216,7 @@
 - [ ] 15. Implement comprehensive testing suite
 - [ ] 15.1 Create unit tests for all components
   - Write unit tests for all React components and Flutter widgets
-  - Create unit tests for all Edge Functions and business logic
+  - Create unit tests for database services and business logic
   - Implement mock services for external API testing
   - Add code coverage reporting and quality gates
   - _Requirements: All requirements validation_
@@ -237,7 +240,7 @@
 - [ ] 17. Create deployment and CI/CD pipeline
   - Set up automated testing and deployment for web application
   - Configure Flutter desktop app building and distribution
-  - Implement Supabase Edge Function deployment automation
+  - Implement Supabase Edge Function deployment automation (for AI services only)
   - Add environment management for development, staging, and production
   - Create monitoring and alerting for production systems
   - _Requirements: 9.1, 9.2, 9.3_
