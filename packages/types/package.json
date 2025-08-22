@@ -4,6 +4,7 @@
     "description": "Shared TypeScript type definitions for database GUI client",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "type": "module",
     "scripts": {
         "type-check": "tsc --noEmit",
         "build": "tsc",
