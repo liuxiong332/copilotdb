@@ -1,5 +1,6 @@
 // Core database types
 export * from './database';
+export * from './database-specific';
 export * from './connection';
 export * from './query';
 export * from './schema';
@@ -21,4 +22,4 @@ export * from './ui';
 export * from './api';
 
 // Supabase generated types
-export * from './supabase';
+export type { Database as SupabaseDatabase } from './supabase';

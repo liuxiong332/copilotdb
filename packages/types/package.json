@@ -2,15 +2,19 @@
     "name": "@database-gui/types",
     "version": "1.0.0",
     "description": "Shared TypeScript type definitions for database GUI client",
-    "main": "index.ts",
-    "types": "index.ts",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "type-check": "tsc --noEmit",
         "build": "tsc",
-        "clean": "rm -rf dist"
+        "clean": "rm -rf dist",
+        "test": "vitest run",
+        "test:watch": "vitest"
     },
     "devDependencies": {
-        "typescript": "^5.0.0"
+        "typescript": "^5.0.0",
+        "vitest": "^1.0.0",
+        "@types/node": "^20.0.0"
     },
     "peerDependencies": {
         "typescript": "^5.0.0"

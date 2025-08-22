@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Database } from '@copilotdb/types';
+import type { SupabaseDatabase } from '@database-gui/types';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
@@ -10,7 +10,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Create Supabase client with TypeScript types
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient<SupabaseDatabase>(supabaseUrl, supabaseAnonKey, {
     auth: {
         autoRefreshToken: true,
         persistSession: true,
@@ -24,7 +24,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 });
 
 // Service role client for server-side operations (use with caution)
-export const supabaseAdmin = createClient<Database>(
+export const supabaseAdmin = createClient<SupabaseDatabase>(
     supabaseUrl,
     process.env.SUPABASE_SERVICE_ROLE_KEY || '',
     {
@@ -96,7 +96,7 @@ export const getUserProfile = async (userId: string) => {
     return data;
 };
 
-export const updateUserProfile = async (userId: string, updates: Partial<Database['public']['Tables']['user_profiles']['Update']>) => {
+export const updateUserProfile = async (userId: string, updates: Partial<SupabaseDatabase['public']['Tables']['user_profiles']['Update']>) => {
     const { data, error } = await supabase
         .from('user_profiles')
         .update(updates)

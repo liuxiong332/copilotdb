@@ -19,10 +19,5 @@
         {
             "path": "../types"
         }
-    ],
-    "references": [
-        {
-            "path": "../types"
-        }
     ]
 }

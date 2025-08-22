@@ -25,10 +25,12 @@
         "test:db": "jest tests/database-setup.test.js"
     },
     "devDependencies": {
+        "@types/node": "^24.3.0",
         "jest": "^30.0.5",
         "supabase": "^2.34.3",
         "turbo": "^1.13.4",
-        "typescript": "^5.9.2"
+        "typescript": "^5.9.2",
+        "vitest": "^3.2.4"
     },
     "engines": {
         "node": ">=18.0.0",

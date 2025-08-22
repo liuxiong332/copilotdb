@@ -1,5 +1,13 @@
 import type { ConnectionConfig, DatabaseType } from '@database-gui/types';
+import type { 
+    MongoConnectionConfig, 
+    MySQLConnectionConfig, 
+    PostgreSQLConnectionConfig, 
+    SQLiteConnectionConfig,
+    DatabaseSpecificConnectionConfig
+} from '@database-gui/types';
 import { isValidEmail, isValidUrl } from './utils';
+import { DEFAULT_PORTS, CONNECTION_STRING_PATTERNS } from '@database-gui/types';
 
 // Validation functions
 export interface ValidationResult {
@@ -15,32 +23,210 @@ export const validateConnectionConfig = (config: ConnectionConfig, type: Databas
         errors.push('Database name is required');
     }
 
+    // Validate connection string if provided
+    if (config.connectionString) {
+        const pattern = CONNECTION_STRING_PATTERNS[type];
+        if (!pattern.test(config.connectionString)) {
+            errors.push(`Invalid connection string format for ${type}`);
+        }
+        // If connection string is valid, skip other validations
+        return { isValid: errors.length === 0, errors };
+    }
+
     // Type-specific validations
     switch (type) {
         case 'sqlite':
-            if (!config.filePath || config.filePath.trim() === '') {
-                errors.push('File path is required for SQLite');
-            }
+            errors.push(...validateSQLiteConfig(config as SQLiteConnectionConfig));
             break;
-
         case 'mongodb':
+            errors.push(...validateMongoConfig(config as MongoConnectionConfig));
+            break;
         case 'mysql':
+            errors.push(...validateMySQLConfig(config as MySQLConnectionConfig));
+            break;
         case 'postgresql':
-            if (!config.host || config.host.trim() === '') {
-                errors.push('Host is required');
-            }
+            errors.push(...validatePostgreSQLConfig(config as PostgreSQLConnectionConfig));
+            break;
+    }
 
-            if (config.port && (config.port < 1 || config.port > 65535)) {
-                errors.push('Port must be between 1 and 65535');
-            }
+    return {
+        isValid: errors.length === 0,
+        errors
+    };
+};
 
-            if (!config.username || config.username.trim() === '') {
-                errors.push('Username is required');
-            }
+export const validateSQLiteConfig = (config: SQLiteConnectionConfig): string[] => {
+    const errors: string[] = [];
 
-            if (!config.password || config.password.trim() === '') {
-                errors.push('Password is required');
-            }
+    if (!config.filePath || config.filePath.trim() === '') {
+        errors.push('File path is required for SQLite');
+    } else {
+        // Validate file extension
+        if (!config.filePath.endsWith('.db') && !config.filePath.endsWith('.sqlite') && !config.filePath.endsWith('.sqlite3')) {
+            errors.push('SQLite file should have .db, .sqlite, or .sqlite3 extension');
+        }
+    }
+
+    // Validate mode
+    if (config.mode && !['ro', 'rw', 'rwc', 'memory'].includes(config.mode)) {
+        errors.push('SQLite mode must be one of: ro, rw, rwc, memory');
+    }
+
+    // Validate cache
+    if (config.cache && !['shared', 'private'].includes(config.cache)) {
+        errors.push('SQLite cache must be either shared or private');
+    }
+
+    // Validate timeout
+    if (config.timeout && config.timeout < 0) {
+        errors.push('Timeout must be a positive number');
+    }
+
+    return errors;
+};
+
+export const validateMongoConfig = (config: MongoConnectionConfig): string[] => {
+    const errors: string[] = [];
+
+    if (!config.host || config.host.trim() === '') {
+        errors.push('Host is required for MongoDB');
+    }
+
+    // Port validation
+    const port = config.port || DEFAULT_PORTS.mongodb;
+    if (port < 1 || port > 65535) {
+        errors.push('Port must be between 1 and 65535');
+    }
+
+    // Username/password validation (optional for MongoDB)
+    if (config.username && !config.password) {
+        errors.push('Password is required when username is provided');
+    }
+
+    // Validate read preference
+    if (config.readPreference && !['primary', 'primaryPreferred', 'secondary', 'secondaryPreferred', 'nearest'].includes(config.readPreference)) {
+        errors.push('Invalid read preference for MongoDB');
+    }
+
+    return errors;
+};
+
+export const validateMySQLConfig = (config: MySQLConnectionConfig): string[] => {
+    const errors: string[] = [];
+
+    if (!config.host || config.host.trim() === '') {
+        errors.push('Host is required for MySQL');
+    }
+
+    // Port validation
+    const port = config.port || DEFAULT_PORTS.mysql;
+    if (port < 1 || port > 65535) {
+        errors.push('Port must be between 1 and 65535');
+    }
+
+    if (!config.username || config.username.trim() === '') {
+        errors.push('Username is required for MySQL');
+    }
+
+    if (!config.password || config.password.trim() === '') {
+        errors.push('Password is required for MySQL');
+    }
+
+    // Validate charset
+    if (config.charset && !/^[a-zA-Z0-9_]+$/.test(config.charset)) {
+        errors.push('Invalid charset format');
+    }
+
+    // Validate timeout
+    if (config.acquireTimeout && config.acquireTimeout < 0) {
+        errors.push('Acquire timeout must be a positive number');
+    }
+
+    return errors;
+};
+
+export const validatePostgreSQLConfig = (config: PostgreSQLConnectionConfig): string[] => {
+    const errors: string[] = [];
+
+    if (!config.host || config.host.trim() === '') {
+        errors.push('Host is required for PostgreSQL');
+    }
+
+    // Port validation
+    const port = config.port || DEFAULT_PORTS.postgresql;
+    if (port < 1 || port > 65535) {
+        errors.push('Port must be between 1 and 65535');
+    }
+
+    if (!config.username || config.username.trim() === '') {
+        errors.push('Username is required for PostgreSQL');
+    }
+
+    if (!config.password || config.password.trim() === '') {
+        errors.push('Password is required for PostgreSQL');
+    }
+
+    // Validate schema name
+    if (config.schema && !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(config.schema)) {
+        errors.push('Invalid schema name format');
+    }
+
+    // Validate timeouts
+    if (config.statement_timeout && config.statement_timeout < 0) {
+        errors.push('Statement timeout must be a positive number');
+    }
+
+    if (config.query_timeout && config.query_timeout < 0) {
+        errors.push('Query timeout must be a positive number');
+    }
+
+    return errors;
+};
+
+// Enhanced connection config validation with detailed error reporting
+export const validateConnectionConfigDetailed = (config: DatabaseSpecificConnectionConfig): ValidationResult => {
+    const errors: string[] = [];
+    const type = config.type;
+
+    // Common validations
+    if (!config.database || config.database.trim() === '') {
+        errors.push('Database name is required');
+    }
+
+    // Pool size validation
+    if (config.poolSize !== undefined) {
+        if (config.poolSize < 1 || config.poolSize > 100) {
+            errors.push('Pool size must be between 1 and 100');
+        }
+    }
+
+    // Timeout validation
+    if (config.timeout !== undefined) {
+        if (config.timeout < 1000 || config.timeout > 300000) {
+            errors.push('Timeout must be between 1000ms and 300000ms (5 minutes)');
+        }
+    }
+
+    // Retry attempts validation
+    if (config.retryAttempts !== undefined) {
+        if (config.retryAttempts < 0 || config.retryAttempts > 10) {
+            errors.push('Retry attempts must be between 0 and 10');
+        }
+    }
+
+    // Type-specific validations
+    switch (type) {
+        case 'sqlite':
+            errors.push(...validateSQLiteConfig(config));
+            break;
+        case 'mongodb':
+            errors.push(...validateMongoConfig(config));
+            break;
+        case 'mysql':
+            errors.push(...validateMySQLConfig(config));
+            break;
+        case 'postgresql':
+            errors.push(...validatePostgreSQLConfig(config));
             break;
     }
 

@@ -6,6 +6,8 @@ export interface QueryRequest {
     limit?: number;
     offset?: number;
     timeout?: number;
+    explain?: boolean;
+    dryRun?: boolean;
 }
 
 export interface QueryResult {
@@ -16,6 +18,12 @@ export interface QueryResult {
     affectedRows?: number;
     error?: string;
     warnings?: string[];
+    metadata?: {
+        queryId?: string;
+        cached?: boolean;
+        fromCache?: boolean;
+        queryPlan?: any;
+    };
 }
 
 export interface ColumnInfo {
@@ -25,6 +33,12 @@ export interface ColumnInfo {
     primaryKey: boolean;
     autoIncrement?: boolean;
     defaultValue?: any;
+    length?: number;
+    precision?: number;
+    scale?: number;
+    unsigned?: boolean;
+    zerofill?: boolean;
+    comment?: string;
 }
 
 export interface QueryExplanation {
