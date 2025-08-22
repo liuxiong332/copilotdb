@@ -7,9 +7,9 @@ set -e
 
 echo "🚀 Setting up Database GUI Client - Supabase Backend"
 
-# Check if Docker is running
-if ! docker info > /dev/null 2>&1; then
-    echo "❌ Docker is not running. Please start Docker and try again."
+# Check if Podman is running
+if ! podman info > /dev/null 2>&1; then
+    echo "❌ Podman is not running. Please start Podman and try again."
     exit 1
 fi
 
