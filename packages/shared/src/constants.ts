@@ -1,12 +1,4 @@
-import type { DatabaseType, SubscriptionTier } from '@database-gui/types';
-
-// Database configuration constants
-export const DATABASE_TYPES: Record<DatabaseType, { name: string; defaultPort: number; icon: string }> = {
-    mongodb: { name: 'MongoDB', defaultPort: 27017, icon: '🍃' },
-    mysql: { name: 'MySQL', defaultPort: 3306, icon: '🐬' },
-    postgresql: { name: 'PostgreSQL', defaultPort: 5432, icon: '🐘' },
-    sqlite: { name: 'SQLite', defaultPort: 0, icon: '📁' }
-};
+import type { SubscriptionTier } from '@database-gui/types';
 
 // Subscription tiers
 export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
@@ -72,42 +64,24 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     }
 };
 
-// Query limits and defaults
-export const QUERY_LIMITS = {
-    DEFAULT_LIMIT: 1000,
-    MAX_LIMIT: 10000,
-    DEFAULT_TIMEOUT: 30000, // 30 seconds
-    MAX_TIMEOUT: 300000 // 5 minutes
+// Application constants
+export const APP_CONFIG = {
+    NAME: 'Database GUI Client',
+    VERSION: '1.0.0',
+    DESCRIPTION: 'Multi-platform database management with AI assistance'
 };
 
-// UI constants
-export const VIEW_MODES = [
-    { type: 'table' as const, label: 'Table', icon: '📊' },
-    { type: 'tree' as const, label: 'Tree', icon: '🌳' },
-    { type: 'json' as const, label: 'JSON', icon: '📄' }
-];
-
-export const EXPORT_FORMATS = [
-    { format: 'csv' as const, label: 'CSV', icon: '📊' },
-    { format: 'json' as const, label: 'JSON', icon: '📄' },
-    { format: 'excel' as const, label: 'Excel', icon: '📈' },
-    { format: 'sql' as const, label: 'SQL', icon: '💾' }
-];
-
-// Error codes
+// Error codes for web client
 export const ERROR_CODES = {
-    CONNECTION_FAILED: 'CONNECTION_FAILED',
-    QUERY_SYNTAX_ERROR: 'QUERY_SYNTAX_ERROR',
     AUTHENTICATION_FAILED: 'AUTHENTICATION_FAILED',
     AUTHORIZATION_FAILED: 'AUTHORIZATION_FAILED',
-    AI_SERVICE_ERROR: 'AI_SERVICE_ERROR',
     PAYMENT_FAILED: 'PAYMENT_FAILED',
     VALIDATION_ERROR: 'VALIDATION_ERROR',
     RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
     INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR'
 } as const;
 
-// API endpoints
+// API endpoints for web client
 export const API_ENDPOINTS = {
     AUTH: {
         SIGN_UP: '/auth/signup',
@@ -116,30 +90,14 @@ export const API_ENDPOINTS = {
         REFRESH: '/auth/refresh',
         RESET_PASSWORD: '/auth/reset-password'
     },
-    CONNECTIONS: {
-        LIST: '/api/connections',
-        CREATE: '/api/connections',
-        UPDATE: '/api/connections/:id',
-        DELETE: '/api/connections/:id',
-        TEST: '/api/connections/test'
-    },
-    QUERIES: {
-        EXECUTE: '/api/queries/execute',
-        HISTORY: '/api/queries/history',
-        EXPLAIN: '/api/queries/explain',
-        VALIDATE: '/api/queries/validate'
-    },
-    AI: {
-        GENERATE_QUERY: '/api/ai/generate-query',
-        CHAT: '/api/ai/chat',
-        OPTIMIZE_QUERY: '/api/ai/optimize-query'
-    },
-    SCHEMA: {
-        GET: '/api/schema/:connectionId'
-    },
     PAYMENTS: {
         CREATE_INTENT: '/api/payments/create-intent',
         CONFIRM: '/api/payments/confirm',
         SUBSCRIPTIONS: '/api/payments/subscriptions'
+    },
+    DOWNLOADS: {
+        WINDOWS: '/api/downloads/windows',
+        MACOS: '/api/downloads/macos',
+        LATEST: '/api/downloads/latest'
     }
 } as const;

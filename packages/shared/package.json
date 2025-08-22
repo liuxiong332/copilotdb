@@ -1,7 +1,7 @@
 {
     "name": "@database-gui/shared",
     "version": "1.0.0",
-    "description": "Shared utilities and constants for database GUI client",
+    "description": "Shared utilities and constants for web client and authentication",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "type": "module",
@@ -13,17 +13,12 @@
         "test:watch": "vitest"
     },
     "dependencies": {
-        "@database-gui/types": "1.0.0",
-        "mongodb": "^6.0.0",
-        "mysql2": "^3.6.0",
-        "pg": "^8.11.0",
-        "sqlite3": "^5.1.6"
+        "@database-gui/types": "1.0.0"
     },
     "devDependencies": {
         "typescript": "^5.0.0",
         "vitest": "^1.0.0",
-        "@types/node": "^20.0.0",
-        "@types/pg": "^8.10.0"
+        "@types/node": "^20.0.0"
     },
     "peerDependencies": {
         "typescript": "^5.0.0"

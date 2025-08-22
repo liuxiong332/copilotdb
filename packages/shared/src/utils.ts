@@ -1,4 +1,4 @@
-import type { DatabaseType, QueryResult, ApiResponse } from '@database-gui/types';
+import type { ApiResponse } from '@database-gui/types';
 
 // Utility functions
 export const formatBytes = (bytes: number): string => {
@@ -93,56 +93,7 @@ export const isValidUrl = (url: string): boolean => {
     }
 };
 
-export const parseConnectionString = (connectionString: string, type: DatabaseType) => {
-    // Basic connection string parsing - can be enhanced based on database type
-    const url = new URL(connectionString);
-    return {
-        host: url.hostname,
-        port: url.port ? parseInt(url.port) : undefined,
-        database: url.pathname.substring(1),
-        username: url.username,
-        password: url.password,
-        ssl: url.searchParams.get('ssl') === 'true'
-    };
-};
 
-export const buildConnectionString = (config: any, type: DatabaseType): string => {
-    const { host, port, database, username, password, ssl } = config;
-
-    switch (type) {
-        case 'postgresql':
-            return `postgresql://${username}:${password}@${host}:${port}/${database}${ssl ? '?ssl=true' : ''}`;
-        case 'mysql':
-            return `mysql://${username}:${password}@${host}:${port}/${database}${ssl ? '?ssl=true' : ''}`;
-        case 'mongodb':
-            return `mongodb://${username}:${password}@${host}:${port}/${database}${ssl ? '?ssl=true' : ''}`;
-        case 'sqlite':
-            return `sqlite://${config.filePath}`;
-        default:
-            throw new Error(`Unsupported database type: ${type}`);
-    }
-};
-
-export const sanitizeQuery = (query: string): string => {
-    // Basic query sanitization - remove dangerous patterns
-    return query
-        .replace(/--.*$/gm, '') // Remove SQL comments
-        .replace(/\/\*[\s\S]*?\*\//g, '') // Remove block comments
-        .trim();
-};
-
-export const extractTableNames = (query: string): string[] => {
-    // Basic table name extraction from SQL queries
-    const tableRegex = /(?:FROM|JOIN|INTO|UPDATE)\s+([`"]?)(\w+)\1/gi;
-    const matches = [];
-    let match;
-
-    while ((match = tableRegex.exec(query)) !== null) {
-        matches.push(match[2]);
-    }
-
-    return [...new Set(matches)]; // Remove duplicates
-};
 
 export const createApiResponse = <T>(
     success: boolean,

@@ -1,4 +1,4 @@
-// Encryption utilities for sensitive data
+// Encryption utilities for sensitive user data and general encryption needs
 import { createHash, createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
 const ENCRYPTION_ALGORITHM = 'aes-256-cbc';
@@ -69,15 +69,15 @@ export class EncryptionService {
     }
 }
 
-// Utility functions for connection config encryption
-export const encryptConnectionConfig = (config: any): string => {
-    const configString = JSON.stringify(config);
-    return EncryptionService.encrypt(configString);
+// Utility functions for general data encryption
+export const encryptData = (data: any): string => {
+    const dataString = JSON.stringify(data);
+    return EncryptionService.encrypt(dataString);
 };
 
-export const decryptConnectionConfig = (encryptedConfig: string): any => {
-    const configString = EncryptionService.decrypt(encryptedConfig);
-    return JSON.parse(configString);
+export const decryptData = (encryptedData: string): any => {
+    const dataString = EncryptionService.decrypt(encryptedData);
+    return JSON.parse(dataString);
 };
 
 // Utility for masking sensitive data in logs

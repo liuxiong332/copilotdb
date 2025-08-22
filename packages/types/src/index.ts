@@ -1,6 +1,4 @@
-// Core database types
-export * from './database';
-export * from './database-specific';
+// Core types (database types moved to Flutter desktop clients)
 export * from './connection';
 export * from './query';
 export * from './schema';

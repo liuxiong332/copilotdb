@@ -1,7 +1,7 @@
 {
     "name": "database-gui-client",
     "version": "1.0.0",
-    "description": "Multi-platform database GUI client with AI assistance",
+    "description": "Multi-platform database GUI client - web showcase and desktop applications",
     "private": true,
     "workspaces": [
         "packages/*",
