@@ -1,12 +1,12 @@
 // Database client wrapper classes for each database type
 
-import type { 
-    DatabaseConnection, 
-    ConnectionConfig, 
-    QueryRequest, 
-    QueryResult, 
+import type {
+    DatabaseConnection,
+    ConnectionConfig,
+    QueryRequest,
+    QueryResult,
     ColumnInfo,
-    DatabaseType 
+    DatabaseType
 } from '@database-gui/types';
 
 import type {
@@ -18,6 +18,13 @@ import type {
     DatabaseCapabilities
 } from '@database-gui/types';
 import { DATABASE_CAPABILITIES } from '@database-gui/types';
+
+// Import database drivers
+import { MongoClient, Db, Collection } from 'mongodb';
+import mysql from 'mysql2/promise';
+import { Client as PgClient } from 'pg';
+import sqlite3 from 'sqlite3';
+import { promisify } from 'util';
 
 // Abstract base class for all database clients
 export abstract class BaseDatabaseClient {
@@ -80,7 +87,7 @@ export class MongoDBClient extends BaseDatabaseClient {
             // this.client = new MongoClient(this.buildConnectionString(), options);
             // await this.client.connect();
             // this.db = this.client.db(this.config.database);
-            
+
             this.isConnected = true;
             this.clearError();
         } catch (error) {
@@ -114,17 +121,17 @@ export class MongoDBClient extends BaseDatabaseClient {
 
     async executeQuery(request: QueryRequest): Promise<QueryResult> {
         const startTime = Date.now();
-        
+
         try {
             // Parse MongoDB query (simplified for this implementation)
             const query = this.parseMongoQuery(request.query);
-            
+
             // Execute query (placeholder implementation)
             const data: any[] = [];
             const totalRows = 0;
-            
+
             const executionTime = Date.now() - startTime;
-            
+
             return {
                 data,
                 totalRows,
@@ -179,28 +186,28 @@ export class MongoDBClient extends BaseDatabaseClient {
 
     private buildConnectionString(): string {
         const config = this.config as MongoConnectionConfig;
-        
+
         if (config.connectionString) {
             return config.connectionString;
         }
 
         let connectionString = 'mongodb://';
-        
+
         if (config.username && config.password) {
             connectionString += `${encodeURIComponent(config.username)}:${encodeURIComponent(config.password)}@`;
         }
-        
+
         connectionString += `${config.host}:${config.port || 27017}/${config.database}`;
-        
+
         const params: string[] = [];
         if (config.authSource) params.push(`authSource=${config.authSource}`);
         if (config.replicaSet) params.push(`replicaSet=${config.replicaSet}`);
         if (config.ssl) params.push('ssl=true');
-        
+
         if (params.length > 0) {
             connectionString += '?' + params.join('&');
         }
-        
+
         return connectionString;
     }
 
@@ -212,10 +219,10 @@ export class MongoDBClient extends BaseDatabaseClient {
 
     private extractMongoColumns(data: any[]): ColumnInfo[] {
         if (data.length === 0) return [];
-        
+
         const firstDoc = data[0];
         const columns: ColumnInfo[] = [];
-        
+
         for (const [key, value] of Object.entries(firstDoc)) {
             columns.push({
                 name: key,
@@ -224,7 +231,7 @@ export class MongoDBClient extends BaseDatabaseClient {
                 primaryKey: key === '_id'
             });
         }
-        
+
         return columns;
     }
 }
@@ -242,7 +249,7 @@ export class MySQLClient extends BaseDatabaseClient {
             // Note: In actual implementation, this would use the mysql2 driver
             // const mysql = require('mysql2/promise');
             // this.connection = await mysql.createConnection(this.buildConnectionOptions());
-            
+
             this.isConnected = true;
             this.clearError();
         } catch (error) {
@@ -276,14 +283,14 @@ export class MySQLClient extends BaseDatabaseClient {
 
     async executeQuery(request: QueryRequest): Promise<QueryResult> {
         const startTime = Date.now();
-        
+
         try {
             // In actual implementation: const [rows, fields] = await this.connection.execute(request.query, request.parameters);
             const rows: any[] = [];
             const fields: any[] = [];
-            
+
             const executionTime = Date.now() - startTime;
-            
+
             return {
                 data: rows,
                 totalRows: rows.length,
@@ -335,7 +342,7 @@ export class MySQLClient extends BaseDatabaseClient {
 
     private buildConnectionOptions(): any {
         const config = this.config as MySQLConnectionConfig;
-        
+
         return {
             host: config.host,
             port: config.port || 3306,
@@ -379,7 +386,7 @@ export class PostgreSQLClient extends BaseDatabaseClient {
             // const { Client } = require('pg');
             // this.client = new Client(this.buildConnectionOptions());
             // await this.client.connect();
-            
+
             this.isConnected = true;
             this.clearError();
         } catch (error) {
@@ -413,13 +420,13 @@ export class PostgreSQLClient extends BaseDatabaseClient {
 
     async executeQuery(request: QueryRequest): Promise<QueryResult> {
         const startTime = Date.now();
-        
+
         try {
             // In actual implementation: const result = await this.client.query(request.query, request.parameters);
             const result = { rows: [], fields: [], rowCount: 0 };
-            
+
             const executionTime = Date.now() - startTime;
-            
+
             return {
                 data: result.rows,
                 totalRows: result.rowCount,
@@ -471,7 +478,7 @@ export class PostgreSQLClient extends BaseDatabaseClient {
 
     private buildConnectionOptions(): any {
         const config = this.config as PostgreSQLConnectionConfig;
-        
+
         return {
             host: config.host,
             port: config.port || 5432,
@@ -508,7 +515,7 @@ export class PostgreSQLClient extends BaseDatabaseClient {
             1114: 'timestamp',
             1184: 'timestamptz'
         };
-        
+
         return typeMap[dataTypeID] || 'unknown';
     }
 }
@@ -526,7 +533,7 @@ export class SQLiteClient extends BaseDatabaseClient {
             // Note: In actual implementation, this would use the sqlite3 driver
             // const sqlite3 = require('sqlite3');
             // this.db = new sqlite3.Database(config.filePath, mode, callback);
-            
+
             this.isConnected = true;
             this.clearError();
         } catch (error) {
@@ -560,13 +567,13 @@ export class SQLiteClient extends BaseDatabaseClient {
 
     async executeQuery(request: QueryRequest): Promise<QueryResult> {
         const startTime = Date.now();
-        
+
         try {
             // In actual implementation: const rows = await this.db.all(request.query, request.parameters);
             const rows: any[] = [];
-            
+
             const executionTime = Date.now() - startTime;
-            
+
             return {
                 data: rows,
                 totalRows: rows.length,
@@ -612,10 +619,10 @@ export class SQLiteClient extends BaseDatabaseClient {
 
     private extractSQLiteColumns(rows: any[]): ColumnInfo[] {
         if (rows.length === 0) return [];
-        
+
         const firstRow = rows[0];
         const columns: ColumnInfo[] = [];
-        
+
         for (const [key, value] of Object.entries(firstRow)) {
             columns.push({
                 name: key,
@@ -624,14 +631,14 @@ export class SQLiteClient extends BaseDatabaseClient {
                 primaryKey: false // Would need PRAGMA table_info for accurate info
             });
         }
-        
+
         return columns;
     }
 }
 
 // Factory function to create appropriate database client
 export function createDatabaseClient(
-    connectionId: string, 
+    connectionId: string,
     config: DatabaseSpecificConnectionConfig
 ): BaseDatabaseClient {
     switch (config.type) {
@@ -653,15 +660,15 @@ export class DatabaseConnectionManager {
     private clients: Map<string, BaseDatabaseClient> = new Map();
 
     async createConnection(
-        connectionId: string, 
+        connectionId: string,
         config: DatabaseSpecificConnectionConfig
     ): Promise<DatabaseConnection> {
         const client = createDatabaseClient(connectionId, config);
-        
+
         try {
             await client.connect();
             this.clients.set(connectionId, client);
-            
+
             return {
                 id: connectionId,
                 type: config.type,
@@ -682,7 +689,7 @@ export class DatabaseConnectionManager {
 
     async testConnection(config: DatabaseSpecificConnectionConfig): Promise<boolean> {
         const tempClient = createDatabaseClient('temp', config);
-        
+
         try {
             await tempClient.connect();
             const result = await tempClient.testConnection();
@@ -695,7 +702,7 @@ export class DatabaseConnectionManager {
 
     async executeQuery(connectionId: string, request: QueryRequest): Promise<QueryResult> {
         const client = this.clients.get(connectionId);
-        
+
         if (!client) {
             return {
                 data: [],
@@ -711,7 +718,7 @@ export class DatabaseConnectionManager {
 
     async getSchema(connectionId: string): Promise<any> {
         const client = this.clients.get(connectionId);
-        
+
         if (!client) {
             throw new Error(`Connection ${connectionId} not found`);
         }
@@ -721,7 +728,7 @@ export class DatabaseConnectionManager {
 
     async disconnect(connectionId: string): Promise<void> {
         const client = this.clients.get(connectionId);
-        
+
         if (client) {
             await client.disconnect();
             this.clients.delete(connectionId);
@@ -729,10 +736,10 @@ export class DatabaseConnectionManager {
     }
 
     async disconnectAll(): Promise<void> {
-        const disconnectPromises = Array.from(this.clients.values()).map(client => 
+        const disconnectPromises = Array.from(this.clients.values()).map(client =>
             client.disconnect().catch(error => console.error('Error disconnecting client:', error))
         );
-        
+
         await Promise.all(disconnectPromises);
         this.clients.clear();
     }

@@ -23,6 +23,10 @@ export interface QueryResult {
         cached?: boolean;
         fromCache?: boolean;
         queryPlan?: any;
+        dryRun?: boolean;
+        validationResult?: any;
+        rowsExamined?: number;
+        indexesUsed?: string[];
     };
 }
 

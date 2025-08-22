@@ -26,197 +26,182 @@
   - Write unit tests for type definitions and validation logic
   - _Requirements: 1.1, 1.2, 3.1_
 
-- [ ] 4. Implement database client services in applications
-- [ ] 4.1 Create database connection service
-  - Implement client-side database connection logic for all platforms
+- [x] 4. Implement shared database client services for desktop applications
+- [x] 4.1 Create database connection service
+  - Implement database connection logic for Flutter desktop clients
   - Add support for all four database types using native drivers (mongodb, mysql2, pg, sqlite3)
   - Implement connection validation and error handling
   - Create connection pooling and management for active connections
   - Write tests for connection functionality across all database types
-  - _Requirements: 1.1, 1.2, 1.3, 1.5_
+  - _Requirements: 5.1, 5.2, 5.3, 5.5_
 
-- [ ] 4.2 Create database schema service
-  - Implement client-side schema retrieval from external databases
+- [x] 4.2 Create database schema service
+  - Implement schema retrieval from external databases for desktop clients
   - Handle different schema formats for each database type (SQL INFORMATION_SCHEMA, MongoDB collections)
   - Add caching mechanism for schema data to improve performance
   - Create schema refresh and update mechanisms
   - Write tests for schema retrieval across all database types
-  - _Requirements: 2.1, 2.2_
+  - _Requirements: 6.1, 6.2_
 
-- [ ] 4.3 Create query execution service
-  - Implement client-side query execution for SQL/MongoDB queries
+- [x] 4.3 Create query execution service
+  - Implement query execution for SQL/MongoDB queries in desktop clients
   - Add query validation and syntax checking for each database type
   - Implement result pagination and limiting for large datasets
   - Add query execution time tracking and error handling
   - Write comprehensive tests for query execution
-  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
-
-- [ ] 5. Implement AI service integration
-- [ ] 5.1 Create AI query generation Edge Function
-  - Integrate OpenAI/Claude API for SQL/MongoDB query generation
-  - Implement natural language to query conversion logic
-  - Add query explanation and optimization features
-  - Create fallback mechanisms for AI service failures
-  - Write tests for AI query generation with mock responses
-  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
-
-- [ ] 5.2 Create AI chatbot Edge Function
-  - Implement conversational AI for natural language database interactions
-  - Add context management for multi-turn conversations
-  - Integrate with database schema for context-aware responses
-  - Implement automatic query execution based on user instructions
-  - Write tests for chatbot functionality and context management
-  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
-
-- [ ] 6. Build Next.js web application foundation
-- [ ] 6.1 Set up Next.js project with authentication
-  - Initialize Next.js 14 project with TypeScript and Tailwind CSS
-  - Integrate Supabase client for authentication and database operations
-  - Implement login, signup, and password reset pages
-  - Add protected route middleware for authenticated pages
-  - Write tests for authentication flows
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 6.2 Create responsive layout and navigation
-  - Implement main application layout with sidebar and content areas
-  - Create responsive navigation that works on desktop and mobile
-  - Add user profile dropdown and logout functionality
-  - Implement theme switching (light/dark mode)
-  - Write component tests for layout and navigation
-  - _Requirements: 2.1, 9.2_
+- [ ] 5. Build Next.js web application for product showcase and account management
+- [ ] 5.1 Create landing page and product showcase
+  - Build responsive landing page with product features and benefits
+  - Add feature demonstrations with screenshots and videos
+  - Implement pricing page with subscription plan details
+  - Create contact and support pages
+  - Write component tests for landing page elements
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 7. Implement database connection management UI
-- [ ] 7.1 Create connection manager component
+- [ ] 5.2 Implement authentication pages
+  - Create signup, login, and password reset pages
+  - Integrate Supabase Auth for user management
+  - Add email verification and password strength validation
+  - Implement protected route middleware
+  - Write tests for authentication flows
+  - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+
+- [ ] 6. Implement web client dashboard and download functionality
+- [ ] 6.1 Create user dashboard
+  - Build user dashboard with account information and subscription status
+  - Display download links for Windows and macOS desktop clients
+  - Add download tracking and version management
+  - Implement user profile management and settings
+  - Write component tests for dashboard functionality
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+
+- [ ] 6.2 Implement subscription and payment management
+  - Create subscription plans display and selection interface
+  - Integrate Stripe payment processing for subscriptions
+  - Add billing history and invoice management
+  - Implement subscription status tracking and notifications
+  - Write tests for payment flows and subscription management
+  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+
+- [ ] 7. Build Flutter desktop applications foundation
+- [ ] 7.1 Set up Flutter project structure
+  - Initialize Flutter projects for Windows and macOS
+  - Set up shared code architecture between platforms
+  - Configure Supabase Flutter client integration for authentication
+  - Implement platform-specific build configurations
+  - Write initial widget tests for app structure
+  - _Requirements: 5.1, 5.2, 5.3, 5.5_
+
+- [ ] 7.2 Implement authentication in Flutter apps
+  - Create login screen with Supabase Auth integration
+  - Implement secure token storage and session management
+  - Add user profile and settings screens
+  - Create logout functionality and session cleanup
+  - Write tests for authentication flows in Flutter
+  - _Requirements: 5.1, 5.2, 5.3, 5.5_
+
+- [ ] 8. Implement database connection management in Flutter
+- [ ] 8.1 Create connection manager component
   - Build UI for adding, editing, and testing database connections
   - Implement form validation for connection parameters
   - Add connection status indicators and error messaging
-  - Implement secure storage of connection credentials
-  - Write component tests for connection management
-  - _Requirements: 1.1, 1.2, 1.3, 1.4, 10.1_
+  - Implement secure local storage of connection credentials
+  - Write widget tests for connection management
+  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 7.2 Create database explorer tree component
+- [ ] 8.2 Create database explorer tree component
   - Implement hierarchical tree view for databases and tables
   - Add expand/collapse functionality for database nodes
   - Implement table selection and context menu options
   - Add refresh functionality for schema updates
   - Write tests for tree navigation and interaction
-  - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 8. Build query execution interface
-- [ ] 8.1 Create query editor component
+- [ ] 9. Build query execution interface in Flutter
+- [ ] 9.1 Create query editor component
   - Implement code editor with syntax highlighting for SQL/MongoDB
   - Add auto-completion and query validation
   - Implement query execution with loading states
   - Add query history and favorites functionality
   - Write tests for editor functionality and query execution
-  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+  - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 8.2 Create results viewer component
+- [ ] 9.2 Create results viewer component
   - Implement table view with sorting, filtering, and pagination
   - Add tree view for hierarchical data display
   - Implement JSON view with syntax highlighting
   - Add data export functionality (CSV, JSON, Excel)
   - Write tests for all view modes and export features
-  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 9. Implement AI assistance features
-- [ ] 9.1 Create AI query assistant component
+- [ ] 10. Implement AI assistance features in Flutter
+- [ ] 10.1 Create AI service integration
+  - Integrate OpenAI/Claude API for SQL/MongoDB query generation
+  - Implement natural language to query conversion logic
+  - Add query explanation and optimization features
+  - Create fallback mechanisms for AI service failures
+  - Write tests for AI query generation with mock responses
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+
+- [ ] 10.2 Create AI query assistant component
   - Build UI for natural language query input
   - Implement AI-generated query display and editing
   - Add query explanation and optimization suggestions
   - Integrate with query editor for seamless workflow
   - Write tests for AI assistant integration
-  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 9.2 Create AI chatbot interface
+- [ ] 11. Create AI chatbot interface in Flutter
+- [ ] 11.1 Implement AI chatbot service
+  - Implement conversational AI for natural language database interactions
+  - Add context management for multi-turn conversations
+  - Integrate with database schema for context-aware responses
+  - Implement automatic query execution based on user instructions
+  - Write tests for chatbot functionality and context management
+  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+
+- [ ] 11.2 Create chatbot UI component
   - Implement chat interface with message history
   - Add typing indicators and loading states
   - Implement automatic query execution from chat responses
   - Add context-aware follow-up question handling
   - Write tests for chatbot UI and conversation flow
-  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 10. Implement subscription and payment system
-- [ ] 10.1 Create subscription management UI
-  - Build subscription plans display and selection interface
-  - Integrate Stripe payment processing
-  - Implement subscription status tracking and usage limits
-  - Add billing history and invoice management
-  - Write tests for payment flows and subscription management
-  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-
-- [ ] 10.2 Implement AI usage tracking and limits
+- [ ] 12. Implement subscription validation in Flutter
+- [ ] 12.1 Add subscription status checking
+  - Implement subscription status validation from Supabase
   - Add AI usage counting and limit enforcement
-  - Implement subscription tier-based feature access
-  - Create usage dashboard and notifications
+  - Create subscription tier-based feature access
   - Add upgrade prompts for free tier users
-  - Write tests for usage tracking and limit enforcement
-  - _Requirements: 8.1, 8.2, 8.3_
+  - Write tests for subscription validation and limits
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 11. Add real-time features with Supabase Realtime
-  - Implement real-time query result updates
-  - Add live collaboration features for shared connections
-  - Implement real-time notifications for long-running queries
-  - Add connection status monitoring with live updates
-  - Write tests for real-time functionality
-  - _Requirements: 3.5, 2.5_
-
-- [ ] 12. Build Flutter desktop applications
-- [ ] 12.1 Set up Flutter project structure
-  - Initialize Flutter projects for Windows and macOS
-  - Set up shared code architecture between platforms
-  - Configure Supabase Flutter client integration
-  - Implement platform-specific build configurations
-  - Write initial widget tests for app structure
-  - _Requirements: 9.2, 9.3, 9.5_
-
-- [ ] 12.2 Implement authentication in Flutter apps
-  - Create login and signup screens with Supabase Auth
-  - Implement secure token storage and session management
-  - Add biometric authentication for desktop apps
-  - Create user profile and settings screens
-  - Write tests for authentication flows in Flutter
-  - _Requirements: 7.1, 7.2, 7.3, 7.4_
-
-- [ ] 12.3 Build database connection management in Flutter
-  - Implement connection creation and management screens
-  - Add connection testing and validation
-  - Create database explorer with tree navigation
-  - Implement connection status monitoring
-  - Write widget tests for connection management
-  - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2_
-
-- [ ] 12.4 Create query interface in Flutter
-  - Build query editor with syntax highlighting
-  - Implement query execution and result display
-  - Add multiple result view modes (table, tree, JSON)
-  - Implement data export functionality
-  - Write tests for query interface components
-  - _Requirements: 3.1, 3.2, 3.3, 4.1, 4.2, 4.3_
-
-- [ ] 12.5 Integrate AI features in Flutter apps
-  - Implement AI query assistant interface
-  - Create chatbot interface with conversation history
-  - Add subscription management and payment integration
-  - Implement usage tracking and limit enforcement
-  - Write tests for AI features and payment integration
-  - _Requirements: 5.1, 5.2, 6.1, 6.2, 8.1, 8.2_
+- [ ] 12.2 Create subscription management UI
+  - Build subscription status display in Flutter app
+  - Add links to web client for subscription management
+  - Implement usage dashboard and notifications
+  - Add subscription renewal reminders
+  - Write tests for subscription UI components
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1, 10.2, 10.3, 10.4, 10.5_
 
 - [ ] 13. Implement comprehensive error handling and logging
-  - Add global error handling for all application layers
+  - Add global error handling for web and desktop applications
   - Implement user-friendly error messages and recovery suggestions
   - Add comprehensive logging for debugging and monitoring
   - Create error reporting and analytics integration
   - Write tests for error handling scenarios
-  - _Requirements: 1.3, 1.5, 3.4, 5.5, 6.4_
+  - _Requirements: 5.5, 6.5, 7.4, 8.4, 9.4, 10.4, 11.1_
 
 - [ ] 14. Add security hardening and data protection
   - Implement input validation and sanitization across all inputs
-  - Add rate limiting for API endpoints and AI services
-  - Implement credential encryption for stored connections
-  - Add security headers and CSRF protection
+  - Add rate limiting for web client API endpoints
+  - Implement credential encryption for stored connections in desktop clients
+  - Add security headers and CSRF protection for web client
   - Write security tests and penetration testing scenarios
-  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+  - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
 
 - [ ] 15. Implement comprehensive testing suite
 - [ ] 15.1 Create unit tests for all components
@@ -235,20 +220,20 @@
   - _Requirements: All requirements validation_
 
 - [ ] 16. Performance optimization and monitoring
-  - Implement query result caching and optimization
-  - Add database connection pooling and management
+  - Implement query result caching and optimization in desktop clients
+  - Add database connection pooling and management in desktop clients
   - Optimize AI service response times and implement timeouts
   - Add application performance monitoring and analytics
-  - Implement lazy loading and virtual scrolling for large datasets
-  - _Requirements: 3.5, 4.4, 5.4, 6.3_
+  - Implement lazy loading and virtual scrolling for large datasets in desktop clients
+  - _Requirements: 7.5, 8.4, 9.4, 10.3_
 
 - [ ] 17. Create deployment and CI/CD pipeline
   - Set up automated testing and deployment for web application
   - Configure Flutter desktop app building and distribution
-  - Implement Supabase Edge Function deployment automation (for AI services only)
+  - Implement Supabase deployment automation for authentication and payments
   - Add environment management for development, staging, and production
   - Create monitoring and alerting for production systems
-  - _Requirements: 9.1, 9.2, 9.3_
+  - _Requirements: All requirements deployment validation_
 
 - [ ] 18. Final integration and user acceptance testing
   - Conduct comprehensive testing across all platforms

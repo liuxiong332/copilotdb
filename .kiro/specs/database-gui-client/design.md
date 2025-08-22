@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Database GUI Client is a multi-platform application consisting of a Supabase backend with custom Edge Functions, Next.js TypeScript web client, and Flutter desktop applications. The system provides a unified interface for connecting to and managing MongoDB, MySQL, PostgreSQL, and SQLite databases, enhanced with AI-powered query assistance and natural language database interactions.
+The Database GUI Client is a multi-platform application consisting of a Supabase backend for authentication and payment management, a Next.js TypeScript web client for product showcase and account management, and Flutter desktop applications that provide full database connectivity and management features. The desktop clients connect directly to MongoDB, MySQL, PostgreSQL, and SQLite databases, enhanced with AI-powered query assistance and natural language database interactions.
 
 ## Architecture
 
@@ -63,21 +63,62 @@ graph TB
 
 ### Technology Stack
 
-- **Backend**: Supabase (PostgreSQL, Auth, Realtime, Storage) + Edge Functions (Deno/TypeScript)
-- **Web Client**: Next.js 14 with TypeScript, React 18, Tailwind CSS
-- **Desktop Clients**: Flutter with Dart
-- **Database Drivers**: mongoose, mysql2, pg, sqlite3 (in Edge Functions)
+- **Backend**: Supabase (PostgreSQL, Auth, Storage) for authentication and payment management
+- **Web Client**: Next.js 14 with TypeScript, React 18, Tailwind CSS (product showcase and account management)
+- **Desktop Clients**: Flutter with Dart (full database management features)
+- **Database Drivers**: mongoose, mysql2, pg, sqlite3 (in Flutter desktop clients)
 - **Authentication**: Supabase Auth (JWT, OAuth, Magic Links)
-- **AI Integration**: OpenAI API, Anthropic Claude API
-- **Payment**: Stripe API
+- **AI Integration**: OpenAI API, Anthropic Claude API (called from desktop clients)
+- **Payment**: Stripe API (integrated with Supabase)
 - **Application Database**: Supabase PostgreSQL
-- **Real-time Communication**: Supabase Realtime (WebSockets)
 
 ## Components and Interfaces
 
-### Backend Components
+### Backend Components (Supabase Only)
 
-#### 1. Database Connection Manager
+#### 1. Authentication Service
+```typescript
+// Supabase client configuration
+interface SupabaseConfig {
+  url: string;
+  anonKey: string;
+  serviceRoleKey: string;
+}
+
+// User profile (extends Supabase Auth User)
+interface UserProfile {
+  id: string; // matches auth.users.id
+  email: string;
+  subscription_tier: 'free' | 'pro' | 'enterprise';
+  ai_usage_count: number;
+  ai_usage_reset_date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Authentication service for both web and desktop clients
+class AuthService {
+  async signUp(email: string, password: string): Promise<User>;
+  async signIn(email: string, password: string): Promise<Session>;
+  async signOut(): Promise<void>;
+  async resetPassword(email: string): Promise<void>;
+  async getProfile(userId: string): Promise<UserProfile>;
+}
+
+// Payment service for subscription management
+class PaymentService {
+  async createSubscription(userId: string, planId: string): Promise<Subscription>;
+  async cancelSubscription(subscriptionId: string): Promise<void>;
+  async updatePaymentMethod(userId: string, paymentMethodId: string): Promise<void>;
+  async getSubscriptionStatus(userId: string): Promise<SubscriptionStatus>;
+}
+
+// Supabase RLS (Row Level Security) policies ensure users only access their own data
+```
+
+#### 2. Desktop Client Components
+
+#### Database Connection Manager (Flutter)
 ```typescript
 interface DatabaseConnection {
   id: string;
@@ -104,7 +145,7 @@ class DatabaseConnectionManager {
 }
 ```
 
-#### 2. Query Execution Engine
+#### Query Execution Engine (Flutter)
 ```typescript
 interface QueryRequest {
   connectionId: string;
@@ -129,7 +170,7 @@ class QueryExecutor {
 }
 ```
 
-#### 3. AI Service Integration
+#### AI Service Integration (Flutter)
 ```typescript
 interface AIQueryRequest {
   naturalLanguage: string;
@@ -152,37 +193,54 @@ class AIService {
 }
 ```
 
-#### 4. Supabase Integration Services
+### Web Client Components (Next.js)
+
+#### 1. Landing Page Component
 ```typescript
-// Supabase client configuration
-interface SupabaseConfig {
-  url: string;
-  anonKey: string;
-  serviceRoleKey: string;
+interface LandingPageProps {
+  features: ProductFeature[];
+  testimonials: Testimonial[];
+  pricing: PricingPlan[];
 }
 
-// User profile (extends Supabase Auth User)
-interface UserProfile {
-  id: string; // matches auth.users.id
-  email: string;
-  subscription_tier: 'free' | 'pro' | 'enterprise';
-  ai_usage_count: number;
-  ai_usage_reset_date: string;
-  created_at: string;
-  updated_at: string;
-}
-
-// Supabase Edge Function for database operations
-class DatabaseService {
-  async connectToDatabase(config: ConnectionConfig, userId: string): Promise<DatabaseConnection>;
-  async executeQuery(request: QueryRequest, userId: string): Promise<QueryResult>;
-  async getSchema(connectionId: string, userId: string): Promise<DatabaseSchema>;
-}
-
-// Supabase RLS (Row Level Security) policies ensure users only access their own data
+// Product showcase with features, benefits, and call-to-action
 ```
 
-### Frontend Components (Shared Interface Design)
+#### 2. Authentication Components
+```typescript
+interface AuthFormProps {
+  mode: 'signin' | 'signup' | 'reset';
+  onSubmit: (credentials: AuthCredentials) => void;
+  isLoading: boolean;
+}
+
+// Login, signup, and password reset forms
+```
+
+#### 3. Dashboard Component
+```typescript
+interface DashboardProps {
+  user: UserProfile;
+  subscription: SubscriptionStatus;
+  downloadLinks: DownloadLink[];
+}
+
+// User dashboard with subscription status and download links
+```
+
+#### 4. Payment Management Component
+```typescript
+interface PaymentManagerProps {
+  subscription: SubscriptionStatus;
+  plans: PricingPlan[];
+  onSubscribe: (planId: string) => void;
+  onCancel: () => void;
+}
+
+// Subscription management and payment processing
+```
+
+### Desktop Client Components (Flutter)
 
 #### 1. Connection Manager Component
 ```typescript
@@ -272,56 +330,21 @@ CREATE POLICY "Users can view own profile" ON public.user_profiles
 CREATE POLICY "Users can update own profile" ON public.user_profiles
   FOR UPDATE USING (auth.uid() = id);
 
--- Saved connections (encrypted)
-CREATE TABLE public.saved_connections (
+-- Download tracking
+CREATE TABLE public.downloads (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  name VARCHAR(255) NOT NULL,
-  database_type VARCHAR(50) NOT NULL,
-  encrypted_config TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  platform VARCHAR(50) NOT NULL, -- 'windows' or 'macos'
+  version VARCHAR(50) NOT NULL,
+  downloaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Enable RLS
-ALTER TABLE public.saved_connections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.downloads ENABLE ROW LEVEL SECURITY;
 
--- RLS Policy: Users can only access their own connections
-CREATE POLICY "Users can manage own connections" ON public.saved_connections
-  FOR ALL USING (auth.uid() = user_id);
-
--- Query history
-CREATE TABLE public.query_history (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  connection_id UUID REFERENCES public.saved_connections(id) ON DELETE CASCADE,
-  query_text TEXT NOT NULL,
-  execution_time INTEGER,
-  row_count INTEGER,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Enable RLS
-ALTER TABLE public.query_history ENABLE ROW LEVEL SECURITY;
-
--- RLS Policy: Users can only access their own query history
-CREATE POLICY "Users can manage own query history" ON public.query_history
-  FOR ALL USING (auth.uid() = user_id);
-
--- AI chat sessions
-CREATE TABLE public.chat_sessions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  connection_id UUID REFERENCES public.saved_connections(id),
-  session_data JSONB,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Enable RLS
-ALTER TABLE public.chat_sessions ENABLE ROW LEVEL SECURITY;
-
--- RLS Policy: Users can only access their own chat sessions
-CREATE POLICY "Users can manage own chat sessions" ON public.chat_sessions
-  FOR ALL USING (auth.uid() = user_id);
+-- RLS Policy: Users can only access their own downloads
+CREATE POLICY "Users can view own downloads" ON public.downloads
+  FOR SELECT USING (auth.uid() = user_id);
 
 -- Subscription payments
 CREATE TABLE public.payments (
