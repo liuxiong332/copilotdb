@@ -128,6 +128,27 @@ CREATE POLICY "Users can view own AI usage" ON public.ai_usage_logs
 CREATE POLICY "System can insert AI usage" ON public.ai_usage_logs
   FOR INSERT WITH CHECK (true); -- Allow system to insert usage logs
 
+-- Download tracking table
+CREATE TABLE IF NOT EXISTS public.downloads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  platform VARCHAR(20) NOT NULL CHECK (platform IN ('windows', 'macos')),
+  version VARCHAR(50) NOT NULL,
+  downloaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  ip_address INET,
+  user_agent TEXT
+);
+
+-- Enable RLS on downloads
+ALTER TABLE public.downloads ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for downloads
+CREATE POLICY "Users can view own downloads" ON public.downloads
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "System can insert downloads" ON public.downloads
+  FOR INSERT WITH CHECK (true); -- Allow system to insert download records
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_saved_connections_user_id ON public.saved_connections(user_id);
 CREATE INDEX IF NOT EXISTS idx_saved_connections_database_type ON public.saved_connections(database_type);
@@ -140,6 +161,9 @@ CREATE INDEX IF NOT EXISTS idx_payments_user_id ON public.payments(user_id);
 CREATE INDEX IF NOT EXISTS idx_payments_stripe_payment_id ON public.payments(stripe_payment_id);
 CREATE INDEX IF NOT EXISTS idx_ai_usage_logs_user_id ON public.ai_usage_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_ai_usage_logs_created_at ON public.ai_usage_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_downloads_user_id ON public.downloads(user_id);
+CREATE INDEX IF NOT EXISTS idx_downloads_platform ON public.downloads(platform);
+CREATE INDEX IF NOT EXISTS idx_downloads_downloaded_at ON public.downloads(downloaded_at DESC);
 
 -- Function to automatically create user profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()

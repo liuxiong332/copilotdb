@@ -13,6 +13,9 @@ export * from './auth';
 // Payment and subscription types
 export * from './payment';
 
+// Download and version management types
+export * from './download';
+
 // UI and component types
 export * from './ui';
 
