@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { User } from '@supabase/supabase-js'
-import { 
-    CreditCard, 
-    Calendar, 
-    CheckCircle, 
+import {
+    CreditCard,
+    Calendar,
+    CheckCircle,
     XCircle,
     AlertCircle,
     Download,
@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { UserProfile, Payment, SubscriptionPlan, UsageStats } from '@database-gui/types'
 import { dashboardService } from '@/lib/dashboard-service'
+import { paymentService } from '@/lib/payment-service'
 
 interface BillingPageProps {
     user: User
@@ -32,15 +33,15 @@ export default function BillingPage({ user }: BillingPageProps) {
     useEffect(() => {
         const loadBillingData = async () => {
             try {
-                const [profileData, usageData] = await Promise.all([
+                const [profileData, usageData, paymentData] = await Promise.all([
                     dashboardService.getUserProfile(user.id),
-                    dashboardService.getUsageStats(user.id)
+                    dashboardService.getUsageStats(user.id),
+                    dashboardService.getPaymentHistory(user.id)
                 ])
 
                 setProfile(profileData)
                 setUsageStats(usageData)
-                // TODO: Load payment history when implemented
-                setPayments([])
+                setPayments(paymentData)
             } catch (error) {
                 console.error('Error loading billing data:', error)
             } finally {
@@ -51,77 +52,13 @@ export default function BillingPage({ user }: BillingPageProps) {
         loadBillingData()
     }, [user.id])
 
-    const subscriptionPlans: SubscriptionPlan[] = [
-        {
-            id: 'free',
-            name: 'Free',
-            description: 'Perfect for getting started with database management',
-            price: 0,
-            currency: 'USD',
-            interval: 'month',
-            stripePriceId: '',
-            features: [
-                '3 database connections',
-                '10 AI queries per month',
-                '100 query history items',
-                'Community support',
-                'Basic query editor'
-            ]
-        },
-        {
-            id: 'pro',
-            name: 'Pro',
-            description: 'For professionals who need more power and flexibility',
-            price: 19,
-            currency: 'USD',
-            interval: 'month',
-            stripePriceId: 'price_pro_monthly',
-            popular: true,
-            features: [
-                '50 database connections',
-                '1,000 AI queries per month',
-                '10,000 query history items',
-                'Email support',
-                'Advanced query editor',
-                'Query optimization suggestions',
-                'Export to multiple formats',
-                'Team collaboration (coming soon)'
-            ]
-        },
-        {
-            id: 'enterprise',
-            name: 'Enterprise',
-            description: 'For teams and organizations with advanced needs',
-            price: 99,
-            currency: 'USD',
-            interval: 'month',
-            stripePriceId: 'price_enterprise_monthly',
-            features: [
-                'Unlimited database connections',
-                'Unlimited AI queries',
-                'Unlimited query history',
-                'Priority support',
-                'Advanced security features',
-                'SSO integration',
-                'Custom integrations',
-                'Dedicated account manager',
-                'SLA guarantee'
-            ]
-        }
-    ]
+    const subscriptionPlans = paymentService.getSubscriptionPlans()
 
     const handleUpgrade = async (planId: string) => {
         setUpgrading(planId)
-        
+
         try {
-            // TODO: Implement Stripe checkout
-            console.log('Upgrading to plan:', planId)
-            
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000))
-            
-            // For now, just show success message
-            alert(`Upgrade to ${planId} plan initiated! You will be redirected to Stripe checkout.`)
+            await paymentService.upgradeSubscription(planId, user.id)
         } catch (error) {
             console.error('Error upgrading plan:', error)
             alert('Failed to initiate upgrade. Please try again.')
@@ -130,20 +67,18 @@ export default function BillingPage({ user }: BillingPageProps) {
         }
     }
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        })
+    const handleManageSubscription = async () => {
+        try {
+            await paymentService.manageSubscription(user.id)
+        } catch (error) {
+            console.error('Error accessing customer portal:', error)
+            alert('Failed to access subscription management. Please try again.')
+        }
     }
 
-    const formatPrice = (price: number, currency: string) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currency
-        }).format(price)
-    }
+    const formatDate = paymentService.formatDate
+
+    const formatPrice = paymentService.formatPrice
 
     const getUsagePercentage = (used: number, limit: number) => {
         if (limit === -1) return 0 // unlimited
@@ -216,7 +151,7 @@ export default function BillingPage({ user }: BillingPageProps) {
                                 </p>
                             </div>
                         </div>
-                        {currentPlan.id === 'free' && (
+                        {currentPlan.id === 'free' ? (
                             <button
                                 onClick={() => handleUpgrade('pro')}
                                 disabled={upgrading === 'pro'}
@@ -233,6 +168,14 @@ export default function BillingPage({ user }: BillingPageProps) {
                                         Upgrade
                                     </>
                                 )}
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleManageSubscription}
+                                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                            >
+                                <ExternalLink className="h-4 w-4 mr-2" />
+                                Manage Subscription
                             </button>
                         )}
                     </div>
@@ -252,7 +195,7 @@ export default function BillingPage({ user }: BillingPageProps) {
                                 <div className="flex items-center justify-between mb-2">
                                     <h4 className="text-sm font-medium text-gray-900">AI Queries</h4>
                                     <span className={`text-sm font-medium ${getUsageColor(aiUsagePercentage)}`}>
-                                        {usageStats.ai_queries_limit === -1 
+                                        {usageStats.ai_queries_limit === -1
                                             ? `${usageStats.ai_queries_used} / ∞`
                                             : `${usageStats.ai_queries_used} / ${usageStats.ai_queries_limit}`
                                         }
@@ -260,11 +203,10 @@ export default function BillingPage({ user }: BillingPageProps) {
                                 </div>
                                 {usageStats.ai_queries_limit !== -1 && (
                                     <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div 
-                                            className={`h-2 rounded-full ${
-                                                aiUsagePercentage >= 90 ? 'bg-red-500' :
+                                        <div
+                                            className={`h-2 rounded-full ${aiUsagePercentage >= 90 ? 'bg-red-500' :
                                                 aiUsagePercentage >= 70 ? 'bg-yellow-500' : 'bg-green-500'
-                                            }`}
+                                                }`}
                                             style={{ width: `${Math.min(aiUsagePercentage, 100)}%` }}
                                         ></div>
                                     </div>
@@ -279,7 +221,7 @@ export default function BillingPage({ user }: BillingPageProps) {
                                 <div className="flex items-center justify-between mb-2">
                                     <h4 className="text-sm font-medium text-gray-900">Database Connections</h4>
                                     <span className={`text-sm font-medium ${getUsageColor(connectionsPercentage)}`}>
-                                        {usageStats.connections_limit === -1 
+                                        {usageStats.connections_limit === -1
                                             ? `${usageStats.connections_used} / ∞`
                                             : `${usageStats.connections_used} / ${usageStats.connections_limit}`
                                         }
@@ -287,11 +229,10 @@ export default function BillingPage({ user }: BillingPageProps) {
                                 </div>
                                 {usageStats.connections_limit !== -1 && (
                                     <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div 
-                                            className={`h-2 rounded-full ${
-                                                connectionsPercentage >= 90 ? 'bg-red-500' :
+                                        <div
+                                            className={`h-2 rounded-full ${connectionsPercentage >= 90 ? 'bg-red-500' :
                                                 connectionsPercentage >= 70 ? 'bg-yellow-500' : 'bg-green-500'
-                                            }`}
+                                                }`}
                                             style={{ width: `${Math.min(connectionsPercentage, 100)}%` }}
                                         ></div>
                                     </div>
@@ -315,17 +256,16 @@ export default function BillingPage({ user }: BillingPageProps) {
                         {subscriptionPlans.map((plan) => {
                             const isCurrentPlan = plan.id === profile?.subscription_tier
                             const canUpgrade = plan.id !== 'free' && profile?.subscription_tier === 'free'
-                            
+
                             return (
-                                <div 
-                                    key={plan.id} 
-                                    className={`relative rounded-lg border-2 p-6 ${
-                                        isCurrentPlan 
-                                            ? 'border-purple-500 bg-purple-50' 
-                                            : plan.popular 
-                                                ? 'border-purple-200 bg-white' 
-                                                : 'border-gray-200 bg-white'
-                                    }`}
+                                <div
+                                    key={plan.id}
+                                    className={`relative rounded-lg border-2 p-6 ${isCurrentPlan
+                                        ? 'border-purple-500 bg-purple-50'
+                                        : plan.popular
+                                            ? 'border-purple-200 bg-white'
+                                            : 'border-gray-200 bg-white'
+                                        }`}
                                 >
                                     {plan.popular && !isCurrentPlan && (
                                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -334,7 +274,7 @@ export default function BillingPage({ user }: BillingPageProps) {
                                             </span>
                                         </div>
                                     )}
-                                    
+
                                     {isCurrentPlan && (
                                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                                             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -350,10 +290,10 @@ export default function BillingPage({ user }: BillingPageProps) {
                                             {plan.id === 'pro' && <Crown className="h-8 w-8 text-purple-600" />}
                                             {plan.id === 'enterprise' && <Building className="h-8 w-8 text-blue-600" />}
                                         </div>
-                                        
+
                                         <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
                                         <p className="text-sm text-gray-600 mt-1">{plan.description}</p>
-                                        
+
                                         <div className="mt-4">
                                             <span className="text-3xl font-bold text-gray-900">
                                                 {plan.price === 0 ? 'Free' : formatPrice(plan.price, plan.currency)}
@@ -386,11 +326,10 @@ export default function BillingPage({ user }: BillingPageProps) {
                                             <button
                                                 onClick={() => handleUpgrade(plan.id)}
                                                 disabled={upgrading === plan.id}
-                                                className={`w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                                                    plan.popular 
-                                                        ? 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500' 
-                                                        : 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500'
-                                                } focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50`}
+                                                className={`w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${plan.popular
+                                                    ? 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500'
+                                                    : 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500'
+                                                    } focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50`}
                                             >
                                                 {upgrading === plan.id ? (
                                                     <>
@@ -488,7 +427,7 @@ export default function BillingPage({ user }: BillingPageProps) {
                                 <p className="text-sm text-gray-500">Get help with billing questions</p>
                             </div>
                         </a>
-                        
+
                         <a
                             href="mailto:billing@databasegui.com"
                             className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:shadow-sm transition-all duration-200"

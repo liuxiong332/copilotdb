@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import ClientProviders from '@/components/providers/ClientProviders'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Temporarily disabled due to network issues
+// const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
     title: 'Database GUI Client - Multi-Platform Database Management',
@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body className="font-sans">
                 <ClientProviders>
                     {children}
                 </ClientProviders>

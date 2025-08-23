@@ -1,5 +1,5 @@
 import { createClient } from './supabase'
-import { UserProfile, DownloadLink, UsageStats, DownloadStats } from '@database-gui/types'
+import { UserProfile, UsageStats, Payment } from '@database-gui/types'
 
 export class DashboardService {
     private supabase = createClient()
@@ -71,7 +71,7 @@ export class DashboardService {
         }
     }
 
-    async getDownloadStats(userId: string): Promise<DownloadStats[]> {
+    async getDownloadStats(userId: string): Promise<any[]> {
         const { data, error } = await this.supabase
             .from('downloads')
             .select('*')
@@ -80,6 +80,21 @@ export class DashboardService {
 
         if (error) {
             console.error('Error fetching download stats:', error)
+            return []
+        }
+
+        return data || []
+    }
+
+    async getPaymentHistory(userId: string): Promise<Payment[]> {
+        const { data, error } = await this.supabase
+            .from('payments')
+            .select('*')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+
+        if (error) {
+            console.error('Error fetching payment history:', error)
             return []
         }
 
@@ -103,7 +118,7 @@ export class DashboardService {
         return true
     }
 
-    getAvailableDownloads(): DownloadLink[] {
+    getAvailableDownloads(): any[] {
         // In a real app, this would come from a database or API
         // For now, we'll return mock data
         return [

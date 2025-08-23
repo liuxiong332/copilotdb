@@ -26,7 +26,7 @@ graph TB
     
     subgraph "External Services"
         OPENAI[OpenAI/Claude API]
-        STRIPE[Stripe Payment API]
+        PADDLE[Paddle Payment API]
     end
     
     subgraph "Target Databases"
@@ -50,7 +50,7 @@ graph TB
     
     EDGE_FUNC --> SUPA_DB
     EDGE_FUNC --> OPENAI
-    EDGE_FUNC --> STRIPE
+    EDGE_FUNC --> PADDLE
     
     EDGE_FUNC --> MONGO
     EDGE_FUNC --> MYSQL
@@ -69,7 +69,7 @@ graph TB
 - **Database Drivers**: mongoose, mysql2, pg, sqlite3 (in Flutter desktop clients)
 - **Authentication**: Supabase Auth (JWT, OAuth, Magic Links)
 - **AI Integration**: OpenAI API, Anthropic Claude API (called from desktop clients)
-- **Payment**: Stripe API (integrated with Supabase)
+- **Payment**: Paddle API (integrated with Supabase)
 - **Application Database**: Supabase PostgreSQL
 
 ## Components and Interfaces
@@ -350,7 +350,7 @@ CREATE POLICY "Users can view own downloads" ON public.downloads
 CREATE TABLE public.payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  stripe_payment_id VARCHAR(255) UNIQUE,
+  paddle_payment_id VARCHAR(255) UNIQUE,
   amount INTEGER NOT NULL,
   currency VARCHAR(3) DEFAULT 'USD',
   status VARCHAR(50) NOT NULL,

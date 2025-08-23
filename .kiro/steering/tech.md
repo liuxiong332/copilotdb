@@ -12,7 +12,7 @@
 - **Desktop**: Flutter with Dart for Windows/macOS applications (full database management)
 - **Database Clients**: Native database drivers (mongodb, mysql2, pg, sqlite3) in Flutter desktop clients
 - **AI Integration**: OpenAI API for query generation and natural language processing (desktop clients only)
-- **Payment Processing**: Stripe API integrated with Supabase
+- **Payment Processing**: Paddle API integrated with Supabase
 - **Testing**: Vitest for unit tests, Jest for integration tests
 
 ## Development Environment

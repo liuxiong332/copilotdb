@@ -49,7 +49,7 @@ This document outlines the requirements for a multi-platform database GUI client
 #### Acceptance Criteria
 
 1. WHEN a user wants to subscribe THEN the system SHALL display available subscription plans and pricing
-2. WHEN a user selects a plan THEN the system SHALL process payment securely through Stripe
+2. WHEN a user selects a plan THEN the system SHALL process payment securely through Paddle
 3. WHEN a user has an active subscription THEN the system SHALL display subscription status and usage
 4. WHEN a user wants to change plans THEN the system SHALL allow upgrades and downgrades
 5. IF payment fails THEN the system SHALL retry payment and notify the user with clear instructions

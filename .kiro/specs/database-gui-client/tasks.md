@@ -87,9 +87,15 @@
 
 
 
-- [ ] 6.2 Implement subscription and payment management
+- [x] 6.2 Implement subscription and payment management
+
+
+
+
+
+
   - Create subscription plans display and selection interface
-  - Integrate Stripe payment processing for subscriptions
+  - Integrate Paddle payment processing for subscriptions
   - Add billing history and invoice management
   - Implement subscription status tracking and notifications
   - Write tests for payment flows and subscription management

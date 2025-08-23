@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
-import { Download, Zap, Shield, Calendar, Database, TrendingUp, CreditCard } from 'lucide-react'
-import { UserProfile, UsageStats, DownloadStats } from '@database-gui/types'
+import { Download, Zap, Shield, Database, TrendingUp, CreditCard } from 'lucide-react'
+import { UserProfile, UsageStats } from '@database-gui/types'
+import BillingNotifications from './BillingNotifications'
 import { dashboardService } from '@/lib/dashboard-service'
 
 interface DashboardOverviewProps {
@@ -13,7 +14,7 @@ interface DashboardOverviewProps {
 export default function DashboardOverview({ user }: DashboardOverviewProps) {
     const [profile, setProfile] = useState<UserProfile | null>(null)
     const [usageStats, setUsageStats] = useState<UsageStats | null>(null)
-    const [downloadStats, setDownloadStats] = useState<DownloadStats[]>([])
+    const [downloadStats, setDownloadStats] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -175,6 +176,9 @@ export default function DashboardOverview({ user }: DashboardOverviewProps) {
                     Here's what's happening with your Database GUI Client account.
                 </p>
             </div>
+
+            {/* Billing notifications */}
+            <BillingNotifications user={user} />
 
             {/* Stats */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
