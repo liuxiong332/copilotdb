@@ -91,8 +91,8 @@ CREATE POLICY "Users can manage own chat sessions" ON public.chat_sessions
 CREATE TABLE IF NOT EXISTS public.payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  stripe_payment_id VARCHAR(255) UNIQUE,
-  stripe_subscription_id VARCHAR(255),
+  paddle_payment_id VARCHAR(255) UNIQUE,
+  paddle_subscription_id VARCHAR(255),
   amount INTEGER NOT NULL, -- amount in cents
   currency VARCHAR(3) DEFAULT 'USD',
   status VARCHAR(50) NOT NULL CHECK (status IN ('pending', 'succeeded', 'failed', 'canceled', 'refunded')),
@@ -158,7 +158,7 @@ CREATE INDEX IF NOT EXISTS idx_query_history_created_at ON public.query_history(
 CREATE INDEX IF NOT EXISTS idx_chat_sessions_user_id ON public.chat_sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_chat_sessions_connection_id ON public.chat_sessions(connection_id);
 CREATE INDEX IF NOT EXISTS idx_payments_user_id ON public.payments(user_id);
-CREATE INDEX IF NOT EXISTS idx_payments_stripe_payment_id ON public.payments(stripe_payment_id);
+CREATE INDEX IF NOT EXISTS idx_payments_paddle_payment_id ON public.payments(paddle_payment_id);
 CREATE INDEX IF NOT EXISTS idx_ai_usage_logs_user_id ON public.ai_usage_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_ai_usage_logs_created_at ON public.ai_usage_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_downloads_user_id ON public.downloads(user_id);

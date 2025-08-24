@@ -99,7 +99,8 @@ See `.env.local.example` for required environment variables:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
 - `OPENAI_API_KEY` - OpenAI API key for AI features
-- `STRIPE_SECRET_KEY` - Stripe secret key for payments
+- `PADDLE_API_KEY` - Paddle API key for payments
+- `PADDLE_WEBHOOK_SECRET` - Paddle webhook secret for payment verification
 
 ## Contributing
 

@@ -1,55 +1,81 @@
-import { loadStripe } from '@stripe/stripe-js'
 import { createClient } from './supabase'
 import { Payment, SubscriptionPlan } from '@database-gui/types'
 
-// Initialize Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+// Initialize Paddle
+declare global {
+    interface Window {
+        Paddle: any;
+    }
+}
 
 export class PaymentService {
     private supabase = createClient()
 
+    async initializePaddle(): Promise<void> {
+        if (typeof window !== 'undefined' && !window.Paddle) {
+            // Load Paddle.js
+            const script = document.createElement('script')
+            script.src = 'https://cdn.paddle.com/paddle/paddle.js'
+            script.async = true
+            document.head.appendChild(script)
+            
+            return new Promise((resolve) => {
+                script.onload = () => {
+                    window.Paddle.Setup({ 
+                        vendor: parseInt(process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID!) 
+                    })
+                    resolve()
+                }
+            })
+        }
+    }
+
     async createCheckoutSession(planId: string, userId: string): Promise<string> {
-        const response = await fetch('/api/stripe/create-checkout-session', {
+        const response = await fetch('/api/paddle/create-checkout-session', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ planId, userId })
+            body: JSON.stringify({
+                planId,
+                userId,
+            }),
         })
 
         if (!response.ok) {
-            const error = await response.json()
-            throw new Error(error.error || 'Failed to create checkout session')
+            throw new Error('Failed to create checkout session')
         }
 
-        const { sessionId } = await response.json()
-        return sessionId
+        const { checkoutUrl } = await response.json()
+        return checkoutUrl
     }
 
-    async redirectToCheckout(sessionId: string): Promise<void> {
-        const stripe = await stripePromise
-        if (!stripe) {
-            throw new Error('Stripe failed to load')
-        }
-
-        const { error } = await stripe.redirectToCheckout({ sessionId })
-        if (error) {
-            throw new Error(error.message)
+    async redirectToCheckout(checkoutUrl: string): Promise<void> {
+        await this.initializePaddle()
+        
+        if (window.Paddle) {
+            window.Paddle.Checkout.open({
+                override: checkoutUrl
+            })
+        } else {
+            // Fallback to direct redirect
+            window.location.href = checkoutUrl
         }
     }
 
     async createPortalSession(userId: string): Promise<string> {
-        const response = await fetch('/api/stripe/create-portal-session', {
+        const response = await fetch('/api/paddle/create-portal-session', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ userId })
+            body: JSON.stringify({
+                userId,
+            }),
         })
 
         if (!response.ok) {
-            const error = await response.json()
-            throw new Error(error.error || 'Failed to create portal session')
+            throw new Error('Failed to create portal session')
         }
 
         const { url } = await response.json()
@@ -64,8 +90,7 @@ export class PaymentService {
             .order('created_at', { ascending: false })
 
         if (error) {
-            console.error('Error fetching payment history:', error)
-            throw new Error('Failed to fetch payment history')
+            throw new Error(`Failed to fetch payment history: ${error.message}`)
         }
 
         return data || []
@@ -74,13 +99,12 @@ export class PaymentService {
     async upgradeSubscription(planId: string, userId: string): Promise<void> {
         try {
             // Create checkout session
-            const sessionId = await this.createCheckoutSession(planId, userId)
+            const checkoutUrl = await this.createCheckoutSession(planId, userId)
             
-            // Redirect to Stripe checkout
-            await this.redirectToCheckout(sessionId)
+            // Redirect to Paddle checkout
+            await this.redirectToCheckout(checkoutUrl)
         } catch (error) {
-            console.error('Error upgrading subscription:', error)
-            throw error
+            throw new Error(`Failed to upgrade subscription: ${error instanceof Error ? error.message : 'Unknown error'}`)
         }
     }
 
@@ -89,11 +113,10 @@ export class PaymentService {
             // Create portal session
             const portalUrl = await this.createPortalSession(userId)
             
-            // Redirect to Stripe customer portal
+            // Redirect to Paddle customer portal
             window.location.href = portalUrl
         } catch (error) {
-            console.error('Error accessing customer portal:', error)
-            throw error
+            throw new Error(`Failed to manage subscription: ${error instanceof Error ? error.message : 'Unknown error'}`)
         }
     }
 
@@ -102,76 +125,54 @@ export class PaymentService {
             {
                 id: 'free',
                 name: 'Free',
-                description: 'Perfect for getting started with database management',
+                description: 'Perfect for getting started',
                 price: 0,
                 currency: 'USD',
                 interval: 'month',
-                stripePriceId: '',
+                paddlePriceId: '',
                 features: [
                     '3 database connections',
-                    '10 AI queries per month',
-                    '100 query history items',
+                    'Basic query editor',
+                    'Export to CSV/JSON',
                     'Community support',
-                    'Basic query editor'
-                ]
+                ],
             },
             {
                 id: 'pro',
                 name: 'Pro',
-                description: 'For professionals who need more power and flexibility',
-                price: 19,
+                description: 'Best for professionals',
+                price: 29,
                 currency: 'USD',
                 interval: 'month',
-                stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || 'price_pro_monthly',
+                paddlePriceId: process.env.NEXT_PUBLIC_PADDLE_PRO_PRICE_ID || 'price_pro_monthly',
                 popular: true,
                 features: [
-                    '50 database connections',
-                    '1,000 AI queries per month',
-                    '10,000 query history items',
-                    'Email support',
-                    'Advanced query editor',
-                    'Query optimization suggestions',
+                    'Unlimited database connections',
+                    'AI-powered query generation',
+                    'Advanced data visualization',
                     'Export to multiple formats',
-                    'Team collaboration (coming soon)'
-                ]
+                    'Priority support',
+                    'Query optimization suggestions',
+                ],
             },
             {
                 id: 'enterprise',
                 name: 'Enterprise',
-                description: 'For teams and organizations with advanced needs',
+                description: 'For teams and organizations',
                 price: 99,
                 currency: 'USD',
                 interval: 'month',
-                stripePriceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID || 'price_enterprise_monthly',
+                paddlePriceId: process.env.NEXT_PUBLIC_PADDLE_ENTERPRISE_PRICE_ID || 'price_enterprise_monthly',
                 features: [
                     'Unlimited database connections',
-                    'Unlimited AI queries',
-                    'Unlimited query history',
-                    'Priority support',
-                    'Advanced security features',
-                    'SSO integration',
+                    'Advanced AI features',
+                    'Team collaboration',
                     'Custom integrations',
-                    'Dedicated account manager',
-                    'SLA guarantee'
-                ]
-            }
+                    'Dedicated support',
+                    'SSO integration',
+                    'Advanced security features',
+                ],
+            },
         ]
     }
-
-    formatPrice(price: number, currency: string): string {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currency
-        }).format(price)
-    }
-
-    formatDate(dateString: string): string {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        })
-    }
 }
-
-export const paymentService = new PaymentService()

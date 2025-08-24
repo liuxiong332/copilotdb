@@ -147,8 +147,8 @@ export interface Database {
                 Row: {
                     id: string
                     user_id: string
-                    stripe_payment_id: string | null
-                    stripe_subscription_id: string | null
+                    paddle_payment_id: string | null
+                    paddle_subscription_id: string | null
                     amount: number
                     currency: string
                     status: 'pending' | 'succeeded' | 'failed' | 'canceled' | 'refunded'
@@ -159,8 +159,8 @@ export interface Database {
                 Insert: {
                     id?: string
                     user_id: string
-                    stripe_payment_id?: string | null
-                    stripe_subscription_id?: string | null
+                    paddle_payment_id?: string | null
+                    paddle_subscription_id?: string | null
                     amount: number
                     currency?: string
                     status: 'pending' | 'succeeded' | 'failed' | 'canceled' | 'refunded'
@@ -171,8 +171,8 @@ export interface Database {
                 Update: {
                     id?: string
                     user_id?: string
-                    stripe_payment_id?: string | null
-                    stripe_subscription_id?: string | null
+                    paddle_payment_id?: string | null
+                    paddle_subscription_id?: string | null
                     amount?: number
                     currency?: string
                     status?: 'pending' | 'succeeded' | 'failed' | 'canceled' | 'refunded'

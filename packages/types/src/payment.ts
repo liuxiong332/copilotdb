@@ -2,7 +2,7 @@
 export interface Payment {
     id: string;
     user_id: string;
-    stripe_payment_id: string;
+    paddle_payment_id: string;
     amount: number;
     currency: string;
     status: 'pending' | 'succeeded' | 'failed' | 'canceled' | 'refunded';
@@ -14,7 +14,7 @@ export interface Payment {
 export interface Subscription {
     id: string;
     user_id: string;
-    stripe_subscription_id: string;
+    paddle_subscription_id: string;
     status: 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'trialing' | 'unpaid';
     tier: 'free' | 'pro' | 'enterprise';
     current_period_start: string;
@@ -41,7 +41,7 @@ export interface SubscriptionPlan {
     interval: 'month' | 'year';
     features: string[];
     popular?: boolean;
-    stripePriceId: string;
+    paddlePriceId: string;
 }
 
 export interface UsageStats {
