@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
-import '../../widgets/connections/connection_manager.dart';
+import '../../widgets/database_selector/database_instance_selector.dart';
 import '../../widgets/explorer/database_explorer.dart';
 import '../profile/profile_screen.dart';
 
@@ -64,23 +64,10 @@ class MainScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Row(
+      body: Column(
         children: [
-          // Left sidebar - Connection Manager
-          SizedBox(
-            width: 350,
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  right: BorderSide(
-                    color: Theme.of(context).dividerColor,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: const ConnectionManager(),
-            ),
-          ),
+          // Database Instance Selector (adjacent to menu)
+          const DatabaseInstanceSelector(),
           // Main content area
           Expanded(
             child: Row(

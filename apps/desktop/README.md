@@ -67,17 +67,44 @@ lib/
 │   ├── app.dart             # Main app widget
 │   ├── config/              # Configuration files
 │   │   └── supabase_config.dart
+│   ├── models/              # Data models
+│   │   ├── database_connection.dart
+│   │   └── database_schema.dart
 │   ├── providers/           # State management
 │   │   ├── auth_provider.dart
 │   │   └── database_provider.dart
+│   ├── services/            # Business logic services
+│   │   ├── connection_storage_service.dart
+│   │   ├── database_connection_service.dart
+│   │   └── database_schema_service.dart
 │   ├── screens/             # UI screens
 │   │   ├── auth/
-│   │   └── main/
+│   │   ├── main/
+│   │   └── profile/
 │   ├── widgets/             # Reusable widgets
-│   │   └── auth/
+│   │   ├── auth/
+│   │   ├── connections/
+│   │   ├── database_selector/  # New database instance selector
+│   │   └── explorer/
 │   └── theme/               # App theming
 │       └── app_theme.dart
 ```
+
+## UI Architecture
+
+The main screen now features a streamlined layout:
+
+- **Database Instance Selector**: Located adjacent to the menu bar, allows quick switching between database connections
+- **Search Functionality**: Integrated search button for finding databases, tables, and columns across the active connection
+- **Database Explorer**: Tree view of the selected database structure
+- **Query Editor Area**: Main workspace for query execution (coming in future updates)
+
+### Key UI Components
+
+- `DatabaseInstanceSelector`: Dropdown-style selector for active database connections
+- `DatabaseSearchDialog`: Full-featured search dialog with database/table/column filtering
+- `DatabaseExplorer`: Tree navigation for database schema exploration
+- `ConnectionManager`: Connection management moved to dialog-based interface
 
 ## Configuration
 
