@@ -41,7 +41,7 @@ const mockUser = {
 describe('Downloads Page', () => {
     beforeEach(() => {
         jest.clearAllMocks()
-        ;(createServerClient as jest.Mock).mockResolvedValue(mockSupabaseClient)
+            ; (createServerClient as jest.Mock).mockResolvedValue(mockSupabaseClient)
     })
 
     it('renders downloads page when user is authenticated', async () => {
