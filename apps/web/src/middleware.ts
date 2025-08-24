@@ -1,14 +1,31 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
     const res = NextResponse.next()
-    const supabase = createMiddlewareClient({ req, res })
+
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return req.cookies.getAll()
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        req.cookies.set(name, value)
+                        res.cookies.set(name, value, options)
+                    })
+                },
+            },
+        }
+    )
 
     const {
-        data: { session },
-    } = await supabase.auth.getSession()
+        data: { user },
+    } = await supabase.auth.getUser()
 
     // Protected routes that require authentication
     const protectedRoutes = ['/dashboard', '/profile', '/settings']
@@ -22,15 +39,15 @@ export async function middleware(req: NextRequest) {
         req.nextUrl.pathname.startsWith(route)
     )
 
-    // Redirect to signin if accessing protected route without session
-    if (isProtectedRoute && !session) {
+    // Redirect to signin if accessing protected route without authenticated user
+    if (isProtectedRoute && !user) {
         const redirectUrl = new URL('/auth/signin', req.url)
         redirectUrl.searchParams.set('redirectTo', req.nextUrl.pathname)
         return NextResponse.redirect(redirectUrl)
     }
 
-    // Redirect to dashboard if accessing auth routes with active session
-    if (isAuthRoute && session) {
+    // Redirect to dashboard if accessing auth routes with authenticated user
+    if (isAuthRoute && user) {
         return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 

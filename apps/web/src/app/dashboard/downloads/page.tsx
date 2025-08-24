@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase-server'
 import DashboardLayout from '@/components/dashboard/DashboardLayout'
-import DownloadsPage from '@/components/dashboard/DownloadsPage'
+import DownloadsPage from '../../../components/dashboard/DownloadsPage'
 
 export const metadata: Metadata = {
     title: 'Downloads - Database GUI Client',
@@ -13,16 +13,16 @@ export default async function Downloads() {
     const supabase = await createServerClient()
 
     const {
-        data: { session },
-    } = await supabase.auth.getSession()
+        data: { user },
+    } = await supabase.auth.getUser()
 
-    if (!session) {
+    if (!user) {
         redirect('/auth/signin')
     }
 
     return (
         <DashboardLayout>
-            <DownloadsPage user={session.user} />
+            <DownloadsPage user={user} />
         </DashboardLayout>
     )
 }
