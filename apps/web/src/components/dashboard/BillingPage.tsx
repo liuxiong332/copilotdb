@@ -76,7 +76,7 @@ export default function BillingPage({ user }: BillingPageProps) {
         }
     }
 
-    const formatDate = paymentService.formatDate
+    const formatDate = dashboardService.formatDate
 
     const formatPrice = paymentService.formatPrice
 

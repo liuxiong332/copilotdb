@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         }
 
         const data = JSON.parse(body)
-        const supabase = createServerClient()
+        const supabase = await createServerClient()
 
         switch (data.alert_name) {
             case 'payment_succeeded':

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        const supabase = createServerClient()
+        const supabase = await createServerClient()
 
         // Get user's subscription
         const { data: subscription, error: subError } = await supabase

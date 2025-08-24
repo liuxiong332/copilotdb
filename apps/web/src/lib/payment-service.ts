@@ -120,6 +120,21 @@ export class PaymentService {
         }
     }
 
+    formatPrice(amount: number, currency: string = 'USD'): string {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency.toUpperCase(),
+        }).format(amount)
+    }
+
+    formatDate(dateString: string): string {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })
+    }
+
     getSubscriptionPlans(): SubscriptionPlan[] {
         return [
             {
@@ -176,3 +191,6 @@ export class PaymentService {
         ]
     }
 }
+
+// Export a singleton instance
+export const paymentService = new PaymentService()

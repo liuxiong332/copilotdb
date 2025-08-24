@@ -14,7 +14,7 @@ import {
     LogOut,
     User
 } from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
+import { createClient } from '@/lib/supabase'
 
 interface DashboardLayoutProps {
     children: React.ReactNode
@@ -30,11 +30,11 @@ const navigation = [
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const { user, signOut } = useAuth()
     const router = useRouter()
+    const supabase = createClient()
 
     const handleSignOut = async () => {
-        await signOut()
+        await supabase.auth.signOut()
         router.push('/')
     }
 
@@ -110,7 +110,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                 </div>
                             </div>
                             <div className="ml-3">
-                                <p className="text-sm font-medium text-gray-700">{user?.email}</p>
+                                <p className="text-sm font-medium text-gray-700">User</p>
                                 <button
                                     onClick={handleSignOut}
                                     className="text-xs text-gray-500 hover:text-gray-700"

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Downloads() {
-    const supabase = createServerClient()
+    const supabase = await createServerClient()
 
     const {
         data: { session },

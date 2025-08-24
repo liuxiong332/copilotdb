@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        const supabase = createServerClient()
+        const supabase = await createServerClient()
 
         // Verify user exists
         const { data: user, error: userError } = await supabase
