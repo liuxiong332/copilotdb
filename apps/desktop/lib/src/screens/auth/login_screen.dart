@@ -14,10 +14,11 @@ class LoginScreen extends StatelessWidget {
         child: Container(
           constraints: const BoxConstraints(maxWidth: 400),
           padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
               // App Logo and Title
               Column(
                 children: [
@@ -72,6 +73,7 @@ class LoginScreen extends StatelessWidget {
                 },
               ),
             ],
+            ),
           ),
         ),
       ),

@@ -281,7 +281,7 @@ void main() {
 
       // Verify profile information is displayed
       expect(find.text('Profile'), findsOneWidget);
-      expect(find.text('test@example.com'), findsOneWidget);
+      expect(find.text('test@example.com'), findsNWidgets(2)); // Appears in header and account info
       expect(find.text('Account Information'), findsOneWidget);
       expect(find.text('Actions'), findsOneWidget);
     });
@@ -306,9 +306,13 @@ void main() {
         ),
       );
 
+      // Scroll down to make Sign Out button visible
+      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -300));
+      await tester.pumpAndSettle();
+
       // Tap sign out
       await tester.tap(find.text('Sign Out'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // Verify confirmation dialog
       expect(find.text('Are you sure you want to sign out?'), findsOneWidget);

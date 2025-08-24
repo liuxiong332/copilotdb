@@ -24,9 +24,10 @@ class ProfileScreen extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 // Profile Header
                 Card(
                   child: Padding(
@@ -145,6 +146,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ],
+              ),
             ),
           );
         },
@@ -212,9 +214,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // Appearance
             Text(
               'Appearance',
@@ -340,6 +343,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ],
+          ),
         ),
       ),
     );

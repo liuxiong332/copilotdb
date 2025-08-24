@@ -90,6 +90,9 @@ void main() {
       mockProvider.setMockActiveConnection(connection);
 
       await tester.pumpWidget(createTestWidget());
+      
+      // Wait for any pending timers to complete
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
       expect(find.text('Database Explorer'), findsOneWidget);
       expect(find.text('Test Connection'), findsOneWidget);
@@ -118,6 +121,9 @@ void main() {
 
       // Should show loading initially
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      
+      // Wait for any pending timers to complete
+      await tester.pumpAndSettle(const Duration(seconds: 3));
     });
 
     testWidgets('refresh button is present and tappable', (WidgetTester tester) async {
@@ -138,6 +144,9 @@ void main() {
       mockProvider.setMockActiveConnection(connection);
 
       await tester.pumpWidget(createTestWidget());
+      
+      // Wait for initial load
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
       final refreshButton = find.byIcon(Icons.refresh);
       expect(refreshButton, findsOneWidget);
@@ -145,6 +154,9 @@ void main() {
       // Should be tappable
       await tester.tap(refreshButton);
       await tester.pump();
+      
+      // Wait for refresh to complete
+      await tester.pumpAndSettle(const Duration(seconds: 3));
     });
 
     testWidgets('test connection button works in not connected state', (WidgetTester tester) async {
@@ -171,6 +183,9 @@ void main() {
 
       await tester.tap(testButton);
       await tester.pump();
+      
+      // Wait for connection test to complete
+      await tester.pumpAndSettle(const Duration(seconds: 3));
     });
 
     testWidgets('shows different icons for different connection statuses', (WidgetTester tester) async {
@@ -214,6 +229,9 @@ void main() {
       mockProvider.setMockActiveConnection(connection);
 
       await tester.pumpWidget(createTestWidget());
+      
+      // Wait for any pending timers to complete
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
       expect(find.text('My Production DB'), findsOneWidget);
     });
