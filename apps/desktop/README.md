@@ -25,6 +25,12 @@ A cross-platform desktop application for database management with AI assistance,
 flutter pub get
 ```
 
+**Key Dependencies:**
+- `window_manager`: Enables frameless window functionality and custom title bar
+- `supabase_flutter`: Authentication and backend services
+- `provider`: State management
+- `flutter_secure_storage`: Secure credential storage
+
 ### 2. Run Tests
 
 ```bash
@@ -92,19 +98,27 @@ lib/
 
 ## UI Architecture
 
-The main screen now features a streamlined layout:
+The application now features a modern frameless window design with a custom title bar:
 
-- **Database Instance Selector**: Located adjacent to the menu bar, allows quick switching between database connections
-- **Search Functionality**: Integrated search button for finding databases, tables, and columns across the active connection
-- **Database Explorer**: Tree view of the selected database structure
+### Custom Title Bar
+- **Frameless Window**: Native window frame removed for a modern, integrated look
+- **Custom Title Bar**: Includes app branding, menu, database selector, search, user info, and window controls
+- **Draggable Areas**: Title bar and connection selector areas support window dragging
+- **Window Controls**: Custom minimize, maximize/restore, and close buttons
+
+### Main Layout
+- **Database Instance Selector**: Integrated into the title bar for quick connection switching
+- **Search Functionality**: Title bar search button for finding databases, tables, and columns
+- **Database Explorer**: Left sidebar tree view of the selected database structure
 - **Query Editor Area**: Main workspace for query execution (coming in future updates)
 
 ### Key UI Components
 
-- `DatabaseInstanceSelector`: Dropdown-style selector for active database connections
+- `CustomTitleBar`: Complete custom title bar with all window functionality
+- `DatabaseInstanceSelector`: Integrated connection selector in title bar
 - `DatabaseSearchDialog`: Full-featured search dialog with database/table/column filtering
 - `DatabaseExplorer`: Tree navigation for database schema exploration
-- `ConnectionManager`: Connection management moved to dialog-based interface
+- `WindowControlButton`: Custom window control buttons with hover effects
 
 ## Configuration
 

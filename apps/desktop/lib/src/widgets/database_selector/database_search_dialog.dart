@@ -66,14 +66,16 @@ class _DatabaseSearchDialogState extends State<DatabaseSearchDialog> {
         children: [
           const Icon(Icons.search),
           const SizedBox(width: 8),
-          const Text(
-            'Search Databases and Tables',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+          const Expanded(
+            child: Text(
+              'Search Databases and Tables',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const Spacer(),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close),

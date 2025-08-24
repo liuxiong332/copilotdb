@@ -6,7 +6,7 @@ import '../../../lib/src/models/database_connection.dart';
 import '../../../lib/src/providers/auth_provider.dart';
 import '../../../lib/src/providers/database_provider.dart';
 import '../../../lib/src/screens/main/main_screen.dart';
-import '../../../lib/src/widgets/database_selector/database_instance_selector.dart';
+import '../../../lib/src/widgets/title_bar/custom_title_bar.dart';
 import '../../../lib/src/widgets/explorer/database_explorer.dart';
 
 // Mock AuthProvider for testing
@@ -46,14 +46,71 @@ class MockAuthProvider extends ChangeNotifier implements AuthProvider {
   }
 }
 
+// Mock DatabaseProvider for testing
+class MockDatabaseProvider extends ChangeNotifier implements DatabaseProvider {
+  final List<DatabaseConnection> _connections = [];
+  DatabaseConnection? _activeConnection;
+  bool _isLoading = false;
+  String? _errorMessage;
+  bool _isInitialized = true;
+
+  @override
+  List<DatabaseConnection> get connections => List.unmodifiable(_connections);
+  
+  @override
+  DatabaseConnection? get activeConnection => _activeConnection;
+  
+  @override
+  bool get isLoading => _isLoading;
+  
+  @override
+  String? get errorMessage => _errorMessage;
+  
+  @override
+  bool get isInitialized => _isInitialized;
+
+  // Implement required methods with no-op or simple implementations
+  @override
+  Future<void> initialize() async {}
+  
+  @override
+  Future<void> addConnection(DatabaseConnection connection) async {}
+  
+  @override
+  Future<void> updateConnection(DatabaseConnection connection) async {}
+  
+  @override
+  Future<void> removeConnection(String id) async {}
+  
+  @override
+  Future<void> clearAllConnections() async {}
+  
+  @override
+  Future<void> refreshConnections() async {}
+  
+  @override
+  Future<void> setActiveConnection(String? id) async {}
+  
+  @override
+  DatabaseConnection? getConnectionById(String id) => null;
+  
+  @override
+  Future<ConnectionTestResult> testConnection(DatabaseConnection connection) async {
+    return ConnectionTestResult(
+      success: true,
+      message: 'Test successful',
+    );
+  }
+}
+
 void main() {
   group('MainScreen', () {
     late MockAuthProvider mockAuthProvider;
-    late DatabaseProvider mockDatabaseProvider;
+    late MockDatabaseProvider mockDatabaseProvider;
 
     setUp(() {
       mockAuthProvider = MockAuthProvider();
-      mockDatabaseProvider = DatabaseProvider();
+      mockDatabaseProvider = MockDatabaseProvider();
     });
 
     Widget createTestWidget() {
@@ -68,21 +125,23 @@ void main() {
       );
     }
 
-    testWidgets('displays app bar with title and user menu', (tester) async {
+    testWidgets('displays custom title bar with app title and user menu', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.text('Database GUI Client'), findsOneWidget);
-      expect(find.byType(AppBar), findsOneWidget);
+      expect(find.byType(CustomTitleBar), findsOneWidget);
       
       // Should show user avatar
       expect(find.byType(CircleAvatar), findsOneWidget);
       expect(find.text('T'), findsOneWidget); // First letter of test@example.com
     });
 
-    testWidgets('displays database instance selector', (tester) async {
+    testWidgets('displays custom title bar with database selector', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      expect(find.byType(DatabaseInstanceSelector), findsOneWidget);
+      expect(find.byType(CustomTitleBar), findsOneWidget);
+      // Database selector is now part of the custom title bar
+      expect(find.text('No connection'), findsOneWidget);
     });
 
     testWidgets('displays database explorer', (tester) async {
@@ -133,9 +192,12 @@ void main() {
     testWidgets('layout has correct structure', (tester) async {
       await tester.pumpWidget(createTestWidget());
 
-      // Main structure should be Column with DatabaseInstanceSelector at top
+      // Main structure should be Column with CustomTitleBar at top
       final mainColumn = find.byType(Column).first;
       expect(mainColumn, findsOneWidget);
+
+      // Should have CustomTitleBar at the top
+      expect(find.byType(CustomTitleBar), findsOneWidget);
 
       // Should have Row for main content area
       final contentRow = find.byType(Row).last;
