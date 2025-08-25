@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../lib/src/models/database_connection.dart';
-import '../../../lib/src/providers/auth_provider.dart';
-import '../../../lib/src/providers/database_provider.dart';
-import '../../../lib/src/screens/main/main_screen.dart';
-import '../../../lib/src/widgets/title_bar/custom_title_bar.dart';
-import '../../../lib/src/widgets/explorer/database_explorer.dart';
+import 'package:database_gui_desktop/src/models/database_connection.dart';
+import 'package:database_gui_desktop/src/providers/auth_provider.dart';
+import 'package:database_gui_desktop/src/providers/database_provider.dart';
+import 'package:database_gui_desktop/src/screens/main/main_screen.dart';
+import 'package:database_gui_desktop/src/widgets/title_bar/custom_title_bar.dart';
+import 'package:database_gui_desktop/src/widgets/explorer/database_explorer.dart';
 
 // Mock AuthProvider for testing
 class MockAuthProvider extends ChangeNotifier implements AuthProvider {
   @override
-  User? get user => const User(
+  User? get user => User(
     id: 'test-id',
-    appMetadata: {},
-    userMetadata: {},
+    appMetadata: const {},
+    userMetadata: const {},
     aud: 'test',
     createdAt: '2023-01-01T00:00:00Z',
     email: 'test@example.com',
   );
-  
+
   @override
   bool get isAuthenticated => true;
-  
+
   @override
   bool isLoading = false;
-  
+
   @override
   String? errorMessage;
 
@@ -56,50 +57,49 @@ class MockDatabaseProvider extends ChangeNotifier implements DatabaseProvider {
 
   @override
   List<DatabaseConnection> get connections => List.unmodifiable(_connections);
-  
+
   @override
   DatabaseConnection? get activeConnection => _activeConnection;
-  
+
   @override
   bool get isLoading => _isLoading;
-  
+
   @override
   String? get errorMessage => _errorMessage;
-  
+
   @override
   bool get isInitialized => _isInitialized;
 
   // Implement required methods with no-op or simple implementations
   @override
   Future<void> initialize() async {}
-  
+
   @override
   Future<void> addConnection(DatabaseConnection connection) async {}
-  
+
   @override
   Future<void> updateConnection(DatabaseConnection connection) async {}
-  
+
   @override
   Future<void> removeConnection(String id) async {}
-  
+
   @override
   Future<void> clearAllConnections() async {}
-  
+
   @override
   Future<void> refreshConnections() async {}
-  
+
   @override
   Future<void> setActiveConnection(String? id) async {}
-  
+
   @override
   DatabaseConnection? getConnectionById(String id) => null;
-  
+
   @override
-  Future<ConnectionTestResult> testConnection(DatabaseConnection connection) async {
-    return ConnectionTestResult(
-      success: true,
-      message: 'Test successful',
-    );
+  Future<ConnectionTestResult> testConnection(
+    DatabaseConnection connection,
+  ) async {
+    return ConnectionTestResult(success: true, message: 'Test successful');
   }
 }
 
@@ -118,25 +118,34 @@ void main() {
         home: MultiProvider(
           providers: [
             ChangeNotifierProvider<AuthProvider>.value(value: mockAuthProvider),
-            ChangeNotifierProvider<DatabaseProvider>.value(value: mockDatabaseProvider),
+            ChangeNotifierProvider<DatabaseProvider>.value(
+              value: mockDatabaseProvider,
+            ),
           ],
           child: const MainScreen(),
         ),
       );
     }
 
-    testWidgets('displays custom title bar with app title and user menu', (tester) async {
+    testWidgets('displays custom title bar with app title and user menu', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.text('Database GUI Client'), findsOneWidget);
       expect(find.byType(CustomTitleBar), findsOneWidget);
-      
+
       // Should show user avatar
       expect(find.byType(CircleAvatar), findsOneWidget);
-      expect(find.text('T'), findsOneWidget); // First letter of test@example.com
+      expect(
+        find.text('T'),
+        findsOneWidget,
+      ); // First letter of test@example.com
     });
 
-    testWidgets('displays custom title bar with database selector', (tester) async {
+    testWidgets('displays custom title bar with database selector', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.byType(CustomTitleBar), findsOneWidget);
@@ -154,7 +163,10 @@ void main() {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.text('Query Editor'), findsOneWidget);
-      expect(find.text('Query execution interface coming in the next tasks...'), findsOneWidget);
+      expect(
+        find.text('Query execution interface coming in the next tasks...'),
+        findsOneWidget,
+      );
       expect(find.byIcon(Icons.code), findsOneWidget);
     });
 
@@ -227,24 +239,5 @@ void main() {
 
       expect(explorerSizedBox.width, 300);
     });
-  });
-}
-
-// Mock User class for testing
-class User {
-  final String id;
-  final Map<String, dynamic> appMetadata;
-  final Map<String, dynamic> userMetadata;
-  final String aud;
-  final String createdAt;
-  final String? email;
-
-  const User({
-    required this.id,
-    required this.appMetadata,
-    required this.userMetadata,
-    required this.aud,
-    required this.createdAt,
-    this.email,
   });
 }
