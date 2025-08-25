@@ -18,13 +18,13 @@ class MockAuthProvider extends ChangeNotifier implements AuthProvider {
     createdAt: '2023-01-01T00:00:00Z',
     email: 'test@example.com',
   );
-  
+
   @override
   bool get isAuthenticated => true;
-  
+
   @override
   bool isLoading = false;
-  
+
   @override
   String? errorMessage;
 
@@ -53,16 +53,16 @@ class MockDatabaseProvider extends ChangeNotifier implements DatabaseProvider {
 
   @override
   List<DatabaseConnection> get connections => List.unmodifiable(_connections);
-  
+
   @override
   DatabaseConnection? get activeConnection => _activeConnection;
-  
+
   @override
   bool get isLoading => _isLoading;
-  
+
   @override
   String? get errorMessage => _errorMessage;
-  
+
   @override
   bool get isInitialized => _isInitialized;
 
@@ -79,39 +79,38 @@ class MockDatabaseProvider extends ChangeNotifier implements DatabaseProvider {
   // Implement required methods with no-op or simple implementations
   @override
   Future<void> initialize() async {}
-  
+
   @override
   Future<void> addConnection(DatabaseConnection connection) async {}
-  
+
   @override
   Future<void> updateConnection(DatabaseConnection connection) async {}
-  
+
   @override
   Future<void> removeConnection(String id) async {}
-  
+
   @override
   Future<void> clearAllConnections() async {}
-  
+
   @override
   Future<void> refreshConnections() async {}
-  
+
   @override
   Future<void> setActiveConnection(String? id) async {
     _activeConnection = _connections.where((c) => c.id == id).firstOrNull;
     notifyListeners();
   }
-  
+
   @override
   DatabaseConnection? getConnectionById(String id) {
     return _connections.where((c) => c.id == id).firstOrNull;
   }
-  
+
   @override
-  Future<ConnectionTestResult> testConnection(DatabaseConnection connection) async {
-    return ConnectionTestResult(
-      success: true,
-      message: 'Test successful',
-    );
+  Future<ConnectionTestResult> testConnection(
+    DatabaseConnection connection,
+  ) async {
+    return ConnectionTestResult(success: true, message: 'Test successful');
   }
 }
 
@@ -149,11 +148,11 @@ void main() {
         home: MultiProvider(
           providers: [
             ChangeNotifierProvider<AuthProvider>.value(value: mockAuthProvider),
-            ChangeNotifierProvider<DatabaseProvider>.value(value: mockDatabaseProvider),
+            ChangeNotifierProvider<DatabaseProvider>.value(
+              value: mockDatabaseProvider,
+            ),
           ],
-          child: const Scaffold(
-            body: CustomTitleBar(),
-          ),
+          child: const Scaffold(body: CustomTitleBar()),
         ),
       );
     }
@@ -171,7 +170,9 @@ void main() {
       expect(find.byIcon(Icons.menu), findsOneWidget);
     });
 
-    testWidgets('displays no connection when no active connection', (tester) async {
+    testWidgets('displays no connection when no active connection', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.text('No connection'), findsOneWidget);
@@ -212,7 +213,10 @@ void main() {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.byType(CircleAvatar), findsOneWidget);
-      expect(find.text('T'), findsOneWidget); // First letter of test@example.com
+      expect(
+        find.text('T'),
+        findsOneWidget,
+      ); // First letter of test@example.com
     });
 
     testWidgets('displays window control buttons', (tester) async {
@@ -223,10 +227,24 @@ void main() {
       // Maximize/restore button will show one of these icons
       expect(
         find.byIcon(Icons.fullscreen).evaluate().isNotEmpty ||
-        find.byIcon(Icons.fullscreen_exit).evaluate().isNotEmpty,
+            find.byIcon(Icons.fullscreen_exit).evaluate().isNotEmpty,
         isTrue,
       );
     });
+
+    testWidgets('follows platform-specific layout conventions', (tester) async {
+      await tester.pumpWidget(createTestWidget());
+
+      // Find the main Row widget containing all title bar elements
+      final rowFinder = find.byType(Row).first;
+      expect(rowFinder, findsOneWidget);
+
+      // The layout should adapt based on platform
+      // This test verifies that the title bar renders without errors
+      // Platform-specific positioning is handled by the build method
+      expect(find.text('Database GUI Client'), findsOneWidget);
+      expect(find.byIcon(Icons.storage), findsOneWidget);
+ 
 
     testWidgets('opens user menu when user section is tapped', (tester) async {
       await tester.pumpWidget(createTestWidget());

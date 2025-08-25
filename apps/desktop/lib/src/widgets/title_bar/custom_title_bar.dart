@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -15,39 +16,60 @@ class CustomTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMacOS = Platform.isMacOS;
+
     return Container(
       height: 48,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor,
-            width: 1,
-          ),
+          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
         ),
       ),
       child: Row(
-        children: [
-          // Menu and App Title
-          _buildMenuSection(context),
-          
-          // Database Connection Selector
-          Expanded(
-            flex: 2,
-            child: _buildConnectionSection(context),
-          ),
-          
-          // Search Button
-          _buildSearchButton(context),
-          
-          // User Information
-          _buildUserSection(context),
-          
-          // Window Controls
-          _buildWindowControls(context),
-        ],
+        children: isMacOS
+            ? _buildMacOSLayout(context)
+            : _buildWindowsLayout(context),
       ),
     );
+  }
+
+  List<Widget> _buildMacOSLayout(BuildContext context) {
+    return [
+      // Window Controls (left side on macOS)
+      _buildMacOSWindowControls(context),
+
+      // Menu and App Title
+      _buildMenuSection(context),
+
+      // Database Connection Selector
+      Expanded(flex: 2, child: _buildConnectionSection(context)),
+
+      // Search Button
+      _buildSearchButton(context),
+
+      // User Information
+      _buildUserSection(context),
+    ];
+  }
+
+  List<Widget> _buildWindowsLayout(BuildContext context) {
+    return [
+      // Menu and App Title
+      _buildMenuSection(context),
+
+      // Database Connection Selector
+      Expanded(flex: 2, child: _buildConnectionSection(context)),
+
+      // Search Button
+      _buildSearchButton(context),
+
+      // User Information
+      _buildUserSection(context),
+
+      // Window Controls (right side on Windows)
+      _buildWindowsWindowControls(context),
+    ];
   }
 
   Widget _buildMenuSection(BuildContext context) {
@@ -152,7 +174,7 @@ class CustomTitleBar extends StatelessWidget {
     return Consumer<DatabaseProvider>(
       builder: (context, provider, child) {
         final activeConnection = provider.activeConnection;
-        
+
         return GestureDetector(
           onPanStart: (details) {
             windowManager.startDragging();
@@ -170,10 +192,15 @@ class CustomTitleBar extends StatelessWidget {
               onTap: () => _showConnectionSelector(context, provider),
               borderRadius: BorderRadius.circular(6),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.3),
                   ),
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -183,7 +210,9 @@ class CustomTitleBar extends StatelessWidget {
                     Icon(
                       _getConnectionIcon(activeConnection?.type),
                       size: 16,
-                      color: _getConnectionStatusColor(activeConnection?.status),
+                      color: _getConnectionStatusColor(
+                        activeConnection?.status,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Flexible(
@@ -200,7 +229,9 @@ class CustomTitleBar extends StatelessWidget {
                     Icon(
                       Icons.arrow_drop_down,
                       size: 16,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ],
                 ),
@@ -215,8 +246,9 @@ class CustomTitleBar extends StatelessWidget {
   Widget _buildSearchButton(BuildContext context) {
     return Consumer<DatabaseProvider>(
       builder: (context, provider, child) {
-        final isConnected = provider.activeConnection?.status == ConnectionStatus.connected;
-        
+        final isConnected =
+            provider.activeConnection?.status == ConnectionStatus.connected;
+
         return IconButton(
           onPressed: isConnected ? () => _showSearchDialog(context) : null,
           icon: const Icon(Icons.search, size: 18),
@@ -233,7 +265,8 @@ class CustomTitleBar extends StatelessWidget {
         if (authProvider.isAuthenticated) {
           // Show authenticated user menu
           return PopupMenuButton<String>(
-            onSelected: (value) => _handleUserAction(context, authProvider, value),
+            onSelected: (value) =>
+                _handleUserAction(context, authProvider, value),
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'profile',
@@ -276,7 +309,8 @@ class CustomTitleBar extends StatelessWidget {
                     radius: 12,
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     child: Text(
-                      authProvider.user?.email?.substring(0, 1).toUpperCase() ?? 'U',
+                      authProvider.user?.email?.substring(0, 1).toUpperCase() ??
+                          'U',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -288,7 +322,9 @@ class CustomTitleBar extends StatelessWidget {
                   Icon(
                     Icons.arrow_drop_down,
                     size: 16,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ],
               ),
@@ -303,7 +339,10 @@ class CustomTitleBar extends StatelessWidget {
               icon: const Icon(Icons.person_outline, size: 16),
               label: const Text('Login'),
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -314,12 +353,58 @@ class CustomTitleBar extends StatelessWidget {
     );
   }
 
-  Widget _buildWindowControls(BuildContext context) {
+  Widget _buildMacOSWindowControls(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 12, right: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Close Button (red, leftmost on macOS)
+          _MacOSWindowControlButton(
+            color: Colors.red,
+            icon: Icons.close,
+            onPressed: () => windowManager.close(),
+            tooltip: 'Close',
+          ),
+          const SizedBox(width: 8),
+          // Minimize Button (yellow, middle on macOS)
+          _MacOSWindowControlButton(
+            color: Colors.orange,
+            icon: Icons.minimize,
+            onPressed: () => windowManager.minimize(),
+            tooltip: 'Minimize',
+          ),
+          const SizedBox(width: 8),
+          // Maximize/Restore Button (green, rightmost on macOS)
+          FutureBuilder<bool>(
+            future: windowManager.isMaximized(),
+            builder: (context, snapshot) {
+              final isMaximized = snapshot.data ?? false;
+              return _MacOSWindowControlButton(
+                color: Colors.green,
+                icon: isMaximized ? Icons.fullscreen_exit : Icons.fullscreen,
+                onPressed: () async {
+                  if (isMaximized) {
+                    await windowManager.unmaximize();
+                  } else {
+                    await windowManager.maximize();
+                  }
+                },
+                tooltip: isMaximized ? 'Restore' : 'Maximize',
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWindowsWindowControls(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         // Minimize Button
-        _WindowControlButton(
+        _WindowsWindowControlButton(
           icon: Icons.minimize,
           onPressed: () => windowManager.minimize(),
           tooltip: 'Minimize',
@@ -329,7 +414,7 @@ class CustomTitleBar extends StatelessWidget {
           future: windowManager.isMaximized(),
           builder: (context, snapshot) {
             final isMaximized = snapshot.data ?? false;
-            return _WindowControlButton(
+            return _WindowsWindowControlButton(
               icon: isMaximized ? Icons.fullscreen_exit : Icons.fullscreen,
               onPressed: () async {
                 if (isMaximized) {
@@ -342,8 +427,8 @@ class CustomTitleBar extends StatelessWidget {
             );
           },
         ),
-        // Close Button
-        _WindowControlButton(
+        // Close Button (rightmost on Windows)
+        _WindowsWindowControlButton(
           icon: Icons.close,
           onPressed: () => windowManager.close(),
           tooltip: 'Close',
@@ -385,25 +470,27 @@ class CustomTitleBar extends StatelessWidget {
 
   void _handleMenuAction(BuildContext context, String action) {
     // TODO: Implement menu actions
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$action menu clicked')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('$action menu clicked')));
   }
 
-  void _handleUserAction(BuildContext context, AuthProvider authProvider, String action) {
+  void _handleUserAction(
+    BuildContext context,
+    AuthProvider authProvider,
+    String action,
+  ) {
     switch (action) {
       case 'profile':
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const ProfileScreen(),
-          ),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
         break;
       case 'settings':
         // TODO: Implement settings
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Settings coming soon')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Settings coming soon')));
         break;
       case 'logout':
         _showSignOutDialog(context, authProvider);
@@ -415,7 +502,10 @@ class CustomTitleBar extends StatelessWidget {
     AiService.requireAuthentication(context);
   }
 
-  void _showConnectionSelector(BuildContext context, DatabaseProvider provider) {
+  void _showConnectionSelector(
+    BuildContext context,
+    DatabaseProvider provider,
+  ) {
     showDialog(
       context: context,
       builder: (context) => _DatabaseInstanceDialog(provider: provider),
@@ -459,13 +549,63 @@ class CustomTitleBar extends StatelessWidget {
   }
 }
 
-class _WindowControlButton extends StatefulWidget {
+// macOS-style window control buttons (circular with colors)
+class _MacOSWindowControlButton extends StatefulWidget {
+  final Color color;
+  final IconData icon;
+  final VoidCallback onPressed;
+  final String tooltip;
+
+  const _MacOSWindowControlButton({
+    required this.color,
+    required this.icon,
+    required this.onPressed,
+    required this.tooltip,
+  });
+
+  @override
+  State<_MacOSWindowControlButton> createState() =>
+      _MacOSWindowControlButtonState();
+}
+
+class _MacOSWindowControlButtonState extends State<_MacOSWindowControlButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onPressed,
+        child: Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: widget.color,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: widget.color.withValues(alpha: 0.3),
+              width: 0.5,
+            ),
+          ),
+          child: _isHovered
+              ? Icon(widget.icon, size: 8, color: Colors.black54)
+              : null,
+        ),
+      ),
+    );
+  }
+}
+
+// Windows-style window control buttons (rectangular)
+class _WindowsWindowControlButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback onPressed;
   final String tooltip;
   final bool isCloseButton;
 
-  const _WindowControlButton({
+  const _WindowsWindowControlButton({
     required this.icon,
     required this.onPressed,
     required this.tooltip,
@@ -473,10 +613,12 @@ class _WindowControlButton extends StatefulWidget {
   });
 
   @override
-  State<_WindowControlButton> createState() => _WindowControlButtonState();
+  State<_WindowsWindowControlButton> createState() =>
+      _WindowsWindowControlButtonState();
 }
 
-class _WindowControlButtonState extends State<_WindowControlButton> {
+class _WindowsWindowControlButtonState
+    extends State<_WindowsWindowControlButton> {
   bool _isHovered = false;
 
   @override
@@ -491,7 +633,9 @@ class _WindowControlButtonState extends State<_WindowControlButton> {
           height: 32,
           decoration: BoxDecoration(
             color: _isHovered
-                ? (widget.isCloseButton ? Colors.red : Theme.of(context).colorScheme.surfaceContainerHighest)
+                ? (widget.isCloseButton
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.surfaceContainerHighest)
                 : Colors.transparent,
           ),
           child: Icon(
@@ -540,10 +684,7 @@ class _DatabaseInstanceDialog extends StatelessWidget {
                   const SizedBox(width: 8),
                   const Text(
                     'Select Database Instance',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
                   IconButton(
@@ -562,8 +703,9 @@ class _DatabaseInstanceDialog extends StatelessWidget {
                       itemCount: provider.connections.length,
                       itemBuilder: (context, index) {
                         final connection = provider.connections[index];
-                        final isActive = provider.activeConnection?.id == connection.id;
-                        
+                        final isActive =
+                            provider.activeConnection?.id == connection.id;
+
                         return ListTile(
                           leading: Icon(
                             _getConnectionIcon(connection.type),
