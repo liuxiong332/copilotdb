@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../lib/src/models/database_connection.dart';
 import '../../../lib/src/providers/auth_provider.dart';
@@ -10,10 +11,10 @@ import '../../../lib/src/widgets/title_bar/custom_title_bar.dart';
 // Mock providers for testing
 class MockAuthProvider extends ChangeNotifier implements AuthProvider {
   @override
-  User? get user => const User(
+  User? get user => User(
     id: 'test-id',
-    appMetadata: {},
-    userMetadata: {},
+    appMetadata: const {},
+    userMetadata: const {},
     aud: 'test',
     createdAt: '2023-01-01T00:00:00Z',
     email: 'test@example.com',
@@ -112,25 +113,6 @@ class MockDatabaseProvider extends ChangeNotifier implements DatabaseProvider {
   ) async {
     return ConnectionTestResult(success: true, message: 'Test successful');
   }
-}
-
-// Mock User class for testing
-class User {
-  final String id;
-  final Map<String, dynamic> appMetadata;
-  final Map<String, dynamic> userMetadata;
-  final String aud;
-  final String createdAt;
-  final String? email;
-
-  const User({
-    required this.id,
-    required this.appMetadata,
-    required this.userMetadata,
-    required this.aud,
-    required this.createdAt,
-    this.email,
-  });
 }
 
 void main() {
@@ -244,7 +226,7 @@ void main() {
       // Platform-specific positioning is handled by the build method
       expect(find.text('Database GUI Client'), findsOneWidget);
       expect(find.byIcon(Icons.storage), findsOneWidget);
- 
+    });
 
     testWidgets('opens user menu when user section is tapped', (tester) async {
       await tester.pumpWidget(createTestWidget());
