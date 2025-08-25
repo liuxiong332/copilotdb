@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
-import 'screens/auth/login_screen.dart';
 import 'screens/main/main_screen.dart';
 import 'theme/app_theme.dart';
 
@@ -26,11 +25,8 @@ class DatabaseGuiApp extends StatelessWidget {
             );
           }
 
-          if (authProvider.isAuthenticated) {
-            return const MainScreen();
-          }
-
-          return const LoginScreen();
+          // Always show the main screen, regardless of authentication status
+          return const MainScreen();
         },
       ),
       debugShowCheckedModeBanner: false,

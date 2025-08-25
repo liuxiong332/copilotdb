@@ -5,6 +5,7 @@ import 'package:window_manager/window_manager.dart';
 import '../../models/database_connection.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/database_provider.dart';
+import '../../services/ai_service.dart';
 import '../database_selector/database_search_dialog.dart';
 import '../connections/connection_form_dialog.dart';
 import '../../screens/profile/profile_screen.dart';
@@ -229,68 +230,86 @@ class CustomTitleBar extends StatelessWidget {
   Widget _buildUserSection(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
-        return PopupMenuButton<String>(
-          onSelected: (value) => _handleUserAction(context, authProvider, value),
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'profile',
-              child: Row(
-                children: [
-                  const Icon(Icons.person, size: 16),
-                  const SizedBox(width: 8),
-                  Text(authProvider.user?.email ?? 'User'),
-                ],
+        if (authProvider.isAuthenticated) {
+          // Show authenticated user menu
+          return PopupMenuButton<String>(
+            onSelected: (value) => _handleUserAction(context, authProvider, value),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'profile',
+                child: Row(
+                  children: [
+                    const Icon(Icons.person, size: 16),
+                    const SizedBox(width: 8),
+                    Text(authProvider.user?.email ?? 'User'),
+                  ],
+                ),
               ),
-            ),
-            const PopupMenuItem(
-              value: 'settings',
-              child: Row(
-                children: [
-                  Icon(Icons.settings, size: 16),
-                  SizedBox(width: 8),
-                  Text('Settings'),
-                ],
+              const PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings, size: 16),
+                    SizedBox(width: 8),
+                    Text('Settings'),
+                  ],
+                ),
               ),
-            ),
-            const PopupMenuDivider(),
-            const PopupMenuItem(
-              value: 'logout',
-              child: Row(
-                children: [
-                  Icon(Icons.logout, size: 16),
-                  SizedBox(width: 8),
-                  Text('Sign Out'),
-                ],
+              const PopupMenuDivider(),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, size: 16),
+                    SizedBox(width: 8),
+                    Text('Sign Out'),
+                  ],
+                ),
               ),
-            ),
-          ],
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircleAvatar(
-                  radius: 12,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  child: Text(
-                    authProvider.user?.email?.substring(0, 1).toUpperCase() ?? 'U',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
+            ],
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: Text(
+                      authProvider.user?.email?.substring(0, 1).toUpperCase() ?? 'U',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.arrow_drop_down,
-                  size: 16,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.arrow_drop_down,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // Show login button for unauthenticated users
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            child: OutlinedButton.icon(
+              onPressed: () => _handleLogin(context),
+              icon: const Icon(Icons.person_outline, size: 16),
+              label: const Text('Login'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          );
+        }
       },
     );
   }
@@ -390,6 +409,10 @@ class CustomTitleBar extends StatelessWidget {
         _showSignOutDialog(context, authProvider);
         break;
     }
+  }
+
+  void _handleLogin(BuildContext context) {
+    AiService.requireAuthentication(context);
   }
 
   void _showConnectionSelector(BuildContext context, DatabaseProvider provider) {

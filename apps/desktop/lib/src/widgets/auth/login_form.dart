@@ -139,8 +139,11 @@ class _LoginFormState extends State<LoginForm> {
     }
 
     if (success && mounted) {
-      // Authentication successful, the app will automatically navigate
-      // to the main screen via the Consumer in app.dart
+      // Check if we're in a dialog context and close it
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop(true);
+      }
     }
   }
 }
