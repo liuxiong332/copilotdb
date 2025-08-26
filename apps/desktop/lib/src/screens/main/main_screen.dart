@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/title_bar/custom_title_bar.dart';
@@ -24,12 +25,13 @@ class MainScreen extends StatelessWidget {
   }
 
   void _showAiQueryDialog(BuildContext context) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => CupertinoAlertDialog(
         title: const Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.auto_awesome),
+            Icon(CupertinoIcons.sparkles),
             SizedBox(width: 8),
             Text('AI Query Generator'),
           ],
@@ -39,7 +41,7 @@ class MainScreen extends StatelessWidget {
           'This demonstrates the authentication flow for AI features.',
         ),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('OK'),
           ),
@@ -49,12 +51,13 @@ class MainScreen extends StatelessWidget {
   }
 
   void _showAiAssistantDialog(BuildContext context) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => CupertinoAlertDialog(
         title: const Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.help_outline),
+            Icon(CupertinoIcons.question_circle),
             SizedBox(width: 8),
             Text('AI Assistant'),
           ],
@@ -64,7 +67,7 @@ class MainScreen extends StatelessWidget {
           'This demonstrates the authentication flow for AI features.',
         ),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('OK'),
           ),
@@ -75,8 +78,8 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return CupertinoPageScaffold(
+      child: Column(
         children: [
           // Custom Title Bar
           const CustomTitleBar(),
@@ -88,10 +91,10 @@ class MainScreen extends StatelessWidget {
                 SizedBox(
                   width: 300,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       border: Border(
                         right: BorderSide(
-                          color: Theme.of(context).dividerColor,
+                          color: CupertinoColors.separator,
                           width: 1,
                         ),
                       ),
@@ -102,15 +105,15 @@ class MainScreen extends StatelessWidget {
                 // Query and Results area
                 Expanded(
                   child: Container(
-                    color: Theme.of(context).colorScheme.surface,
+                    color: CupertinoColors.systemBackground,
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
-                            Icons.code,
+                            CupertinoIcons.doc_text,
                             size: 64,
-                            color: Colors.grey,
+                            color: CupertinoColors.systemGrey,
                           ),
                           const SizedBox(height: 16),
                           const Text(
@@ -118,6 +121,7 @@ class MainScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color: CupertinoColors.label,
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -125,7 +129,7 @@ class MainScreen extends StatelessWidget {
                             'Connect to a database and start querying',
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.grey,
+                              color: CupertinoColors.systemGrey,
                             ),
                           ),
                           const SizedBox(height: 32),
@@ -135,24 +139,26 @@ class MainScreen extends StatelessWidget {
                             padding: const EdgeInsets.all(24),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Theme.of(context).dividerColor,
+                                color: CupertinoColors.separator,
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Column(
                               children: [
-                                Row(
+                                const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
-                                      Icons.auto_awesome,
-                                      color: Theme.of(context).colorScheme.primary,
+                                      CupertinoIcons.sparkles,
+                                      color: CupertinoColors.activeBlue,
                                     ),
-                                    const SizedBox(width: 8),
+                                    SizedBox(width: 8),
                                     Text(
                                       'AI-Powered Features',
-                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      style: TextStyle(
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
+                                        color: CupertinoColors.label,
                                       ),
                                     ),
                                   ],
@@ -161,19 +167,31 @@ class MainScreen extends StatelessWidget {
                                 const Text(
                                   'Generate queries using natural language and get AI assistance',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.grey),
+                                  style: TextStyle(color: CupertinoColors.systemGrey),
                                 ),
                                 const SizedBox(height: 16),
-                                ElevatedButton.icon(
+                                CupertinoButton.filled(
                                   onPressed: () => _handleAiQueryGeneration(context),
-                                  icon: const Icon(Icons.auto_awesome),
-                                  label: const Text('Generate Query with AI'),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(CupertinoIcons.sparkles),
+                                      SizedBox(width: 8),
+                                      Text('Generate Query with AI'),
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(height: 8),
-                                OutlinedButton.icon(
+                                CupertinoButton(
                                   onPressed: () => _handleAiAssistance(context),
-                                  icon: const Icon(Icons.help_outline),
-                                  label: const Text('Ask AI Assistant'),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(CupertinoIcons.question_circle),
+                                      SizedBox(width: 8),
+                                      Text('Ask AI Assistant'),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),

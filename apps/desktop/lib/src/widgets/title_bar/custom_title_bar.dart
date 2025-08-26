@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -20,10 +21,10 @@ class CustomTitleBar extends StatelessWidget {
 
     return Container(
       height: 48,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+      decoration: const BoxDecoration(
+        color: CupertinoColors.systemBackground,
         border: Border(
-          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
+          bottom: BorderSide(color: CupertinoColors.separator, width: 1),
         ),
       ),
       child: Row(
@@ -90,79 +91,28 @@ class CustomTitleBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // App Icon/Logo
-            Icon(
-              Icons.storage,
-              color: Theme.of(context).colorScheme.primary,
+            const Icon(
+              CupertinoIcons.device_desktop,
+              color: CupertinoColors.activeBlue,
               size: 20,
             ),
             const SizedBox(width: 8),
             // App Title
-            Text(
+            const Text(
               'Database GUI Client',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: CupertinoColors.label,
               ),
             ),
             const SizedBox(width: 16),
             // Menu Button
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.menu, size: 18),
-              tooltip: 'Menu',
-              onSelected: (value) => _handleMenuAction(context, value),
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'file',
-                  child: Row(
-                    children: [
-                      Icon(Icons.folder, size: 16),
-                      SizedBox(width: 8),
-                      Text('File'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, size: 16),
-                      SizedBox(width: 8),
-                      Text('Edit'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'view',
-                  child: Row(
-                    children: [
-                      Icon(Icons.visibility, size: 16),
-                      SizedBox(width: 8),
-                      Text('View'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'tools',
-                  child: Row(
-                    children: [
-                      Icon(Icons.build, size: 16),
-                      SizedBox(width: 8),
-                      Text('Tools'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'help',
-                  child: Row(
-                    children: [
-                      Icon(Icons.help, size: 16),
-                      SizedBox(width: 8),
-                      Text('Help'),
-                    ],
-                  ),
-                ),
-              ],
+            CupertinoButton(
+              padding: const EdgeInsets.all(8),
+              minSize: 0,
+              onPressed: () => _showMenuOptions(context),
+              child: const Icon(CupertinoIcons.ellipsis, size: 18),
             ),
           ],
         ),
@@ -188,9 +138,8 @@ class CustomTitleBar extends StatelessWidget {
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: InkWell(
+            child: GestureDetector(
               onTap: () => _showConnectionSelector(context, provider),
-              borderRadius: BorderRadius.circular(6),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -198,9 +147,7 @@ class CustomTitleBar extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.outline.withValues(alpha: 0.3),
+                    color: CupertinoColors.separator,
                   ),
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -226,12 +173,10 @@ class CustomTitleBar extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Icon(
-                      Icons.arrow_drop_down,
+                    const Icon(
+                      CupertinoIcons.chevron_down,
                       size: 16,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      color: CupertinoColors.systemGrey,
                     ),
                   ],
                 ),
@@ -249,11 +194,15 @@ class CustomTitleBar extends StatelessWidget {
         final isConnected =
             provider.activeConnection?.status == ConnectionStatus.connected;
 
-        return IconButton(
+        return CupertinoButton(
+          padding: const EdgeInsets.all(8),
+          minSize: 0,
           onPressed: isConnected ? () => _showSearchDialog(context) : null,
-          icon: const Icon(Icons.search, size: 18),
-          tooltip: 'Search databases and tables',
-          iconSize: 18,
+          child: Icon(
+            CupertinoIcons.search,
+            size: 18,
+            color: isConnected ? CupertinoColors.activeBlue : CupertinoColors.systemGrey3,
+          ),
         );
       },
     );
@@ -264,87 +213,55 @@ class CustomTitleBar extends StatelessWidget {
       builder: (context, authProvider, child) {
         if (authProvider.isAuthenticated) {
           // Show authenticated user menu
-          return PopupMenuButton<String>(
-            onSelected: (value) =>
-                _handleUserAction(context, authProvider, value),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'profile',
-                child: Row(
-                  children: [
-                    const Icon(Icons.person, size: 16),
-                    const SizedBox(width: 8),
-                    Text(authProvider.user?.email ?? 'User'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'settings',
-                child: Row(
-                  children: [
-                    Icon(Icons.settings, size: 16),
-                    SizedBox(width: 8),
-                    Text('Settings'),
-                  ],
-                ),
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(
-                value: 'logout',
-                child: Row(
-                  children: [
-                    Icon(Icons.logout, size: 16),
-                    SizedBox(width: 8),
-                    Text('Sign Out'),
-                  ],
-                ),
-              ),
-            ],
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+          return CupertinoButton(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            minSize: 0,
+            onPressed: () => _showUserMenu(context, authProvider),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: const BoxDecoration(
+                    color: CupertinoColors.activeBlue,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
                     child: Text(
-                      authProvider.user?.email?.substring(0, 1).toUpperCase() ??
-                          'U',
-                      style: TextStyle(
+                      authProvider.user?.email?.substring(0, 1).toUpperCase() ?? 'U',
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: CupertinoColors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.arrow_drop_down,
-                    size: 16,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 4),
+                const Icon(
+                  CupertinoIcons.chevron_down,
+                  size: 16,
+                  color: CupertinoColors.systemGrey,
+                ),
+              ],
             ),
           );
         } else {
           // Show login button for unauthenticated users
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: OutlinedButton.icon(
+            child: CupertinoButton(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minSize: 0,
               onPressed: () => _handleLogin(context),
-              icon: const Icon(Icons.person_outline, size: 16),
-              label: const Text('Login'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(CupertinoIcons.person, size: 16),
+                  SizedBox(width: 4),
+                  Text('Login'),
+                ],
               ),
             ),
           );
@@ -468,11 +385,152 @@ class CustomTitleBar extends StatelessWidget {
     }
   }
 
+  void _showMenuOptions(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: const Text('Menu'),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleMenuAction(context, 'file');
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.folder),
+                SizedBox(width: 8),
+                Text('File'),
+              ],
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleMenuAction(context, 'edit');
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.pencil),
+                SizedBox(width: 8),
+                Text('Edit'),
+              ],
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleMenuAction(context, 'view');
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.eye),
+                SizedBox(width: 8),
+                Text('View'),
+              ],
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleMenuAction(context, 'tools');
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.wrench),
+                SizedBox(width: 8),
+                Text('Tools'),
+              ],
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleMenuAction(context, 'help');
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.question_circle),
+                SizedBox(width: 8),
+                Text('Help'),
+              ],
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+  }
+
   void _handleMenuAction(BuildContext context, String action) {
     // TODO: Implement menu actions
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('$action menu clicked')));
+    // For now, just show a simple message
+  }
+
+  void _showUserMenu(BuildContext context, AuthProvider authProvider) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(authProvider.user?.email ?? 'User'),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleUserAction(context, authProvider, 'profile');
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.person),
+                SizedBox(width: 8),
+                Text('Profile'),
+              ],
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleUserAction(context, authProvider, 'settings');
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.settings),
+                SizedBox(width: 8),
+                Text('Settings'),
+              ],
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleUserAction(context, authProvider, 'logout');
+            },
+            isDestructiveAction: true,
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(CupertinoIcons.square_arrow_right),
+                SizedBox(width: 8),
+                Text('Sign Out'),
+              ],
+            ),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
   }
 
   void _handleUserAction(
@@ -482,15 +540,12 @@ class CustomTitleBar extends StatelessWidget {
   ) {
     switch (action) {
       case 'profile':
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+        Navigator.of(context).push(
+          CupertinoPageRoute(builder: (context) => const ProfileScreen()),
+        );
         break;
       case 'settings':
         // TODO: Implement settings
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Settings coming soon')));
         break;
       case 'logout':
         _showSignOutDialog(context, authProvider);
@@ -506,40 +561,37 @@ class CustomTitleBar extends StatelessWidget {
     BuildContext context,
     DatabaseProvider provider,
   ) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (context) => _DatabaseInstanceDialog(provider: provider),
     );
   }
 
   void _showSearchDialog(BuildContext context) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (context) => const DatabaseSearchDialog(),
     );
   }
 
   void _showSignOutDialog(BuildContext context, AuthProvider authProvider) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: const Text('Sign Out'),
           content: const Text('Are you sure you want to sign out?'),
           actions: [
-            TextButton(
+            CupertinoDialogAction(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
-            ElevatedButton(
+            CupertinoDialogAction(
               onPressed: () {
                 Navigator.of(context).pop();
                 authProvider.signOut();
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
+              isDestructiveAction: true,
               child: const Text('Sign Out'),
             ),
           ],
@@ -659,41 +711,21 @@ class _DatabaseInstanceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
+    return CupertinoAlertDialog(
+      title: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(CupertinoIcons.device_desktop),
+          SizedBox(width: 8),
+          Text('Select Database Instance'),
+        ],
+      ),
+      content: Container(
         width: 400,
-        constraints: const BoxConstraints(maxHeight: 500),
+        constraints: const BoxConstraints(maxHeight: 400),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                border: Border(
-                  bottom: BorderSide(
-                    color: Theme.of(context).dividerColor,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.storage),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Select Database Instance',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-            ),
             // Connection List
             Flexible(
               child: provider.connections.isEmpty
@@ -706,7 +738,7 @@ class _DatabaseInstanceDialog extends StatelessWidget {
                         final isActive =
                             provider.activeConnection?.id == connection.id;
 
-                        return ListTile(
+                        return CupertinoListTile(
                           leading: Icon(
                             _getConnectionIcon(connection.type),
                             color: _getConnectionStatusColor(connection.status),
@@ -720,12 +752,11 @@ class _DatabaseInstanceDialog extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           trailing: isActive
-                              ? Icon(
-                                  Icons.check_circle,
-                                  color: Theme.of(context).colorScheme.primary,
+                              ? const Icon(
+                                  CupertinoIcons.check_mark_circled,
+                                  color: CupertinoColors.activeBlue,
                                 )
                               : null,
-                          selected: isActive,
                           onTap: () {
                             provider.setActiveConnection(connection.id);
                             Navigator.of(context).pop();
@@ -734,58 +765,51 @@ class _DatabaseInstanceDialog extends StatelessWidget {
                       },
                     ),
             ),
-            // Footer
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: Theme.of(context).dividerColor,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _showAddConnectionDialog(context);
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Connection'),
-                ),
-              ),
-            ),
           ],
         ),
       ),
+      actions: [
+        CupertinoDialogAction(
+          onPressed: () {
+            Navigator.of(context).pop();
+            _showAddConnectionDialog(context);
+          },
+          child: const Text('Add Connection'),
+        ),
+        CupertinoDialogAction(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+      ],
     );
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(32),
+    return const Padding(
+      padding: EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.storage_outlined,
+            CupertinoIcons.device_desktop,
             size: 48,
-            color: Theme.of(context).colorScheme.outline,
+            color: CupertinoColors.systemGrey,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             'No Database Connections',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: CupertinoColors.systemGrey,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Add your first database connection to get started',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
+            style: TextStyle(
+              fontSize: 14,
+              color: CupertinoColors.systemGrey,
             ),
             textAlign: TextAlign.center,
           ),
@@ -840,7 +864,7 @@ class _DatabaseInstanceDialog extends StatelessWidget {
   }
 
   void _showAddConnectionDialog(BuildContext context) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (context) => const ConnectionFormDialog(),
     );

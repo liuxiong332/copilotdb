@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,7 +20,7 @@ void main() async {
     size: Size(1200, 800),
     minimumSize: Size(800, 600),
     center: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: CupertinoColors.systemBackground,
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.hidden, // This makes it frameless
     windowButtonVisibility: false,
