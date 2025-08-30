@@ -101,174 +101,207 @@
   - Write tests for payment flows and subscription management
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [x] 7. Build Flutter desktop applications foundation
+- [ ] 7. Build Electron desktop application foundation
 
 
 
 
-- [x] 7.1 Set up Flutter project structure
+- [ ] 7.1 Set up Electron + React project structure
 
 
-  - Initialize Flutter projects for Windows and macOS
-  - Set up shared code architecture between platforms
-  - Configure Supabase Flutter client integration for authentication
-  - Implement platform-specific build configurations
-  - Write initial widget tests for app structure
-  - _Requirements: 5.1, 5.2, 5.3, 5.5_
+  - Initialize Electron project with React, TypeScript, Shadcn UI, and TailwindCSS
+  - Set up main process and renderer process architecture
+  - Configure Supabase client integration for authentication
+  - Implement frameless window configuration
+  - Write initial component tests for app structure
+  - _Requirements: 5.1, 5.2, 5.3, 5.5, 6.1_
 
 
 
-- [x] 7.2 Implement authentication in Flutter apps
+- [ ] 7.2 Implement authentication dialog and skip functionality
 
-  - Create login screen with Supabase Auth integration
+  - Create login/signup dialog component with Shadcn UI
   - Implement secure token storage and session management
-  - Add user profile and settings screens
-  - Create logout functionality and session cleanup
-  - Write tests for authentication flows in Flutter
+  - Add skip login functionality for offline usage
+  - Create user profile and settings screens
+  - Write tests for authentication flows
   - _Requirements: 5.1, 5.2, 5.3, 5.5_
 
-- [x] 8. Implement database connection management in Flutter
+- [ ] 8. Implement custom title bar and frameless window
 
 
 
 
-- [x] 8.1 Create connection manager component
+- [ ] 8.1 Create custom title bar component
 
 
-  - Build UI for adding, editing, and testing database connections
-  - Implement form validation for connection parameters
-  - Add connection status indicators and error messaging
-  - Implement secure local storage of connection credentials
-  - Write widget tests for connection management
-  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - Build frameless window with custom title bar using React and Shadcn
+  - Implement Menu, DB Instance Switcher dropdown, SearchBar, and ChatBot Trigger Button
+  - Add window controls (minimize, maximize, close) for cross-platform compatibility
+  - Implement database switching functionality in title bar
+  - Write component tests for title bar interactions
+  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
 
 
-- [ ] 8.2 Create database explorer tree component
-  - Implement hierarchical tree view for databases and tables
-  - Add expand/collapse functionality for database nodes
+- [ ] 8.2 Create new database connection dialog
+  - Build New DB Connection Dialog with connection string input for MongoDB, MySQL, SQLite
+  - Implement connection string validation and testing
+  - Add secure local storage of connection credentials using Electron's safeStorage
+  - Implement connection status indicators and error messaging
+  - Write component tests for connection dialog
+  - _Requirements: 5.4, 7.1, 7.2, 7.3, 7.4, 7.5_
+
+- [ ] 9. Implement main application layout and database explorer
+
+
+
+
+- [ ] 9.1 Create database tree explorer component (left sidebar)
+  - Implement hierarchical tree view for databases and tables in left sidebar
+  - Add expand/collapse functionality for database nodes using Shadcn components
   - Implement table selection and context menu options
   - Add refresh functionality for schema updates
   - Write tests for tree navigation and interaction
-  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 9. Build query execution interface in Flutter
-- [ ] 9.1 Create query editor component
-  - Implement code editor with syntax highlighting for SQL/MongoDB
-  - Add auto-completion and query validation
+- [ ] 9.2 Create main layout with panels
+  - Implement main application layout with left sidebar, right top (editor), and right bottom (results) panels
+  - Add resizable panels using React components
+  - Implement responsive design for different window sizes
+  - Add panel state persistence in local storage
+  - Write tests for layout functionality and responsiveness
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+
+- [ ] 10. Build query execution interface
+
+
+
+
+- [ ] 10.1 Create query editor component (right top panel)
+  - Implement code editor with syntax highlighting for SQL/MongoDB in right top panel
+  - Add auto-completion and query validation using Monaco Editor or CodeMirror
   - Implement query execution with loading states
   - Add query history and favorites functionality
   - Write tests for editor functionality and query execution
-  - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 9.2 Create results viewer component
+- [ ] 10.2 Create results viewer component (right bottom panel)
+  - Implement JSON, Tree, and Table view modes in right bottom panel (DB View)
+  - Add view mode switching with Shadcn UI tabs or buttons
   - Implement table view with sorting, filtering, and pagination
-  - Add tree view for hierarchical data display
-  - Implement JSON view with syntax highlighting
   - Add data export functionality (CSV, JSON, Excel)
   - Write tests for all view modes and export features
-  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 10. Implement AI assistance features in Flutter
-- [ ] 10.1 Create AI service integration
-  - Integrate OpenAI/Claude API for SQL/MongoDB query generation
+- [ ] 11. Implement AI assistance features
+
+
+
+
+- [ ] 11.1 Create AI service integration in Electron main process
+  - Integrate OpenAI/Claude API for SQL/MongoDB query generation in main process
   - Implement natural language to query conversion logic
   - Add query explanation and optimization features
   - Create fallback mechanisms for AI service failures
   - Write tests for AI query generation with mock responses
-  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+  - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
 
-- [ ] 10.2 Create AI query assistant component
-  - Build UI for natural language query input
+- [ ] 11.2 Create AI query assistant integration
+  - Build UI integration for natural language query input in query editor
   - Implement AI-generated query display and editing
   - Add query explanation and optimization suggestions
   - Integrate with query editor for seamless workflow
   - Write tests for AI assistant integration
-  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+  - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
 
-- [ ] 11. Create AI chatbot interface in Flutter
-- [ ] 11.1 Implement AI chatbot service
+- [ ] 12. Create AI chatbot sidebar interface
+
+
+
+
+- [ ] 12.1 Implement AI chatbot service
   - Implement conversational AI for natural language database interactions
   - Add context management for multi-turn conversations
   - Integrate with database schema for context-aware responses
   - Implement automatic query execution based on user instructions
   - Write tests for chatbot functionality and context management
-  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+  - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
 
-- [ ] 11.2 Create chatbot UI component
-  - Implement chat interface with message history
+- [ ] 12.2 Create chatbot sidebar UI component
+  - Implement right sidebar chat interface with message history using Shadcn components
+  - Add ChatBot Trigger Button functionality in title bar
   - Add typing indicators and loading states
   - Implement automatic query execution from chat responses
-  - Add context-aware follow-up question handling
   - Write tests for chatbot UI and conversation flow
-  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+  - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
 
-- [ ] 12. Implement subscription validation in Flutter
-- [ ] 12.1 Add subscription status checking
+- [ ] 13. Implement subscription validation in Electron app
+- [ ] 13.1 Add subscription status checking
   - Implement subscription status validation from Supabase
   - Add AI usage counting and limit enforcement
   - Create subscription tier-based feature access
   - Add upgrade prompts for free tier users
   - Write tests for subscription validation and limits
-  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1, 10.2, 10.3, 10.4, 10.5_
+  - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 12.1, 12.2, 12.3, 12.4, 12.5_
 
-- [ ] 12.2 Create subscription management UI
-  - Build subscription status display in Flutter app
+- [ ] 13.2 Create subscription management UI
+  - Build subscription status display in Electron app
   - Add links to web client for subscription management
   - Implement usage dashboard and notifications
   - Add subscription renewal reminders
   - Write tests for subscription UI components
-  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1, 10.2, 10.3, 10.4, 10.5_
+  - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 12.1, 12.2, 12.3, 12.4, 12.5_
 
-- [ ] 13. Implement comprehensive error handling and logging
-  - Add global error handling for web and desktop applications
+- [ ] 14. Implement comprehensive error handling and logging
+  - Add global error handling for web and Electron desktop applications
   - Implement user-friendly error messages and recovery suggestions
   - Add comprehensive logging for debugging and monitoring
   - Create error reporting and analytics integration
   - Write tests for error handling scenarios
-  - _Requirements: 5.5, 6.5, 7.4, 8.4, 9.4, 10.4, 11.1_
+  - _Requirements: 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.1_
 
-- [ ] 14. Add security hardening and data protection
+- [ ] 15. Add security hardening and data protection
   - Implement input validation and sanitization across all inputs
   - Add rate limiting for web client API endpoints
-  - Implement credential encryption for stored connections in desktop clients
+  - Implement credential encryption for stored connections in Electron using safeStorage
   - Add security headers and CSRF protection for web client
   - Write security tests and penetration testing scenarios
-  - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
 
-- [ ] 15. Implement comprehensive testing suite
-- [ ] 15.1 Create unit tests for all components
-  - Write unit tests for all React components and Flutter widgets
+- [ ] 16. Implement comprehensive testing suite
+- [ ] 16.1 Create unit tests for all components
+  - Write unit tests for all React components in both web and Electron apps
   - Create unit tests for database services and business logic
   - Implement mock services for external API testing
   - Add code coverage reporting and quality gates
   - _Requirements: All requirements validation_
 
-- [ ] 15.2 Create integration and E2E tests
+- [ ] 16.2 Create integration and E2E tests
   - Write integration tests for Supabase database operations
-  - Create E2E tests for complete user workflows
-  - Implement cross-platform testing for web and desktop
+  - Create E2E tests for complete user workflows using Playwright
+  - Implement testing for Electron app using Spectron or similar
   - Add performance testing for query execution and AI services
   - Write tests for payment and subscription flows
   - _Requirements: All requirements validation_
 
-- [ ] 16. Performance optimization and monitoring
-  - Implement query result caching and optimization in desktop clients
-  - Add database connection pooling and management in desktop clients
+- [ ] 17. Performance optimization and monitoring
+  - Implement query result caching and optimization in Electron app
+  - Add database connection pooling and management in Electron main process
   - Optimize AI service response times and implement timeouts
   - Add application performance monitoring and analytics
-  - Implement lazy loading and virtual scrolling for large datasets in desktop clients
-  - _Requirements: 7.5, 8.4, 9.4, 10.3_
+  - Implement lazy loading and virtual scrolling for large datasets
+  - _Requirements: 9.5, 10.4, 11.4, 12.3_
 
-- [ ] 17. Create deployment and CI/CD pipeline
+- [ ] 18. Create deployment and CI/CD pipeline
   - Set up automated testing and deployment for web application
-  - Configure Flutter desktop app building and distribution
+  - Configure Electron app building and distribution for Windows, macOS, and Linux
   - Implement Supabase deployment automation for authentication and payments
   - Add environment management for development, staging, and production
   - Create monitoring and alerting for production systems
   - _Requirements: All requirements deployment validation_
 
-- [ ] 18. Final integration and user acceptance testing
+- [ ] 19. Final integration and user acceptance testing
   - Conduct comprehensive testing across all platforms
   - Perform user acceptance testing with real database scenarios
   - Validate all requirements against implemented functionality

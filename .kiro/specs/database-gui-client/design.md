@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Database GUI Client is a multi-platform application consisting of a Supabase backend for authentication and payment management, a Next.js TypeScript web client for product showcase and account management, and Flutter desktop applications that provide full database connectivity and management features. The desktop clients connect directly to MongoDB, MySQL, PostgreSQL, and SQLite databases, enhanced with AI-powered query assistance and natural language database interactions.
+The Database GUI Client is a multi-platform application consisting of a Supabase backend for authentication and payment management, a Next.js TypeScript web client for product showcase and account management, and an Electron desktop application built with React, Shadcn UI, and TailwindCSS that provides full database connectivity and management features. The desktop client connects directly to MongoDB, MySQL, PostgreSQL, and SQLite databases, enhanced with AI-powered query assistance and natural language database interactions.
 
 ## Architecture
 
@@ -12,8 +12,7 @@ The Database GUI Client is a multi-platform application consisting of a Supabase
 graph TB
     subgraph "Client Layer"
         WEB[Next.js Web Client]
-        WIN[Flutter Windows App]
-        MAC[Flutter macOS App]
+        DESKTOP[Electron Desktop App]
     end
     
     subgraph "Supabase Platform"
@@ -37,16 +36,13 @@ graph TB
     end
     
     WEB --> SUPA_AUTH
-    WIN --> SUPA_AUTH
-    MAC --> SUPA_AUTH
+    DESKTOP --> SUPA_AUTH
     
     WEB --> EDGE_FUNC
-    WIN --> EDGE_FUNC
-    MAC --> EDGE_FUNC
+    DESKTOP --> EDGE_FUNC
     
     WEB --> SUPA_REALTIME
-    WIN --> SUPA_REALTIME
-    MAC --> SUPA_REALTIME
+    DESKTOP --> SUPA_REALTIME
     
     EDGE_FUNC --> SUPA_DB
     EDGE_FUNC --> OPENAI
@@ -65,10 +61,10 @@ graph TB
 
 - **Backend**: Supabase (PostgreSQL, Auth, Storage) for authentication and payment management
 - **Web Client**: Next.js 14 with TypeScript, React 18, Tailwind CSS (product showcase and account management)
-- **Desktop Clients**: Flutter with Dart (full database management features)
-- **Database Drivers**: mongoose, mysql2, pg, sqlite3 (in Flutter desktop clients)
+- **Desktop Client**: Electron with React 18, Shadcn UI, TailwindCSS (full database management features)
+- **Database Drivers**: mongoose, mysql2, pg, sqlite3 (in Electron main process)
 - **Authentication**: Supabase Auth (JWT, OAuth, Magic Links)
-- **AI Integration**: OpenAI API, Anthropic Claude API (called from desktop clients)
+- **AI Integration**: OpenAI API, Anthropic Claude API (called from desktop client)
 - **Payment**: Paddle API (integrated with Supabase)
 - **Application Database**: Supabase PostgreSQL
 
@@ -116,9 +112,9 @@ class PaymentService {
 // Supabase RLS (Row Level Security) policies ensure users only access their own data
 ```
 
-#### 2. Desktop Client Components
+#### 2. Desktop Client Components (Electron + React)
 
-#### Database Connection Manager (Flutter)
+#### Database Connection Manager (Electron Main Process)
 ```typescript
 interface DatabaseConnection {
   id: string;
@@ -135,6 +131,7 @@ interface ConnectionConfig {
   password?: string;
   ssl?: boolean;
   filePath?: string; // for SQLite
+  connectionString?: string; // for MongoDB/MySQL/SQLite
 }
 
 class DatabaseConnectionManager {
@@ -145,7 +142,7 @@ class DatabaseConnectionManager {
 }
 ```
 
-#### Query Execution Engine (Flutter)
+#### Query Execution Engine (Electron Main Process)
 ```typescript
 interface QueryRequest {
   connectionId: string;
@@ -170,7 +167,7 @@ class QueryExecutor {
 }
 ```
 
-#### AI Service Integration (Flutter)
+#### AI Service Integration (Electron Main Process)
 ```typescript
 interface AIQueryRequest {
   naturalLanguage: string;
@@ -240,33 +237,70 @@ interface PaymentManagerProps {
 // Subscription management and payment processing
 ```
 
-### Desktop Client Components (Flutter)
+### Desktop Client Components (Electron + React + Shadcn)
 
-#### 1. Connection Manager Component
+#### 1. Main Application Layout
 ```typescript
-interface ConnectionManagerProps {
-  connections: DatabaseConnection[];
-  onConnect: (config: ConnectionConfig) => void;
-  onDisconnect: (connectionId: string) => void;
-  onTest: (config: ConnectionConfig) => Promise<boolean>;
+interface MainLayoutProps {
+  user?: User;
+  onSkipLogin: () => void;
 }
 
-// Handles database connection UI and management
+// Frameless window with custom title bar, menu, and layout
 ```
 
-#### 2. Database Explorer Component
+#### 2. Custom Title Bar Component
 ```typescript
-interface DatabaseExplorerProps {
+interface CustomTitleBarProps {
+  onMenuClick: () => void;
+  currentDatabase?: DatabaseConnection;
+  databases: DatabaseConnection[];
+  onDatabaseSwitch: (dbId: string) => void;
+  onSearch: (query: string) => void;
+  onChatToggle: () => void;
+}
+
+// Custom title bar with menu, DB switcher, search, and chat trigger
+```
+
+#### 3. Login/Signup Dialog Component
+```typescript
+interface AuthDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSkip: () => void;
+  onSuccess: (user: User) => void;
+}
+
+// Modal dialog for authentication with skip option
+```
+
+#### 4. New DB Connection Dialog
+```typescript
+interface NewConnectionDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (config: ConnectionConfig) => void;
+  initialType?: 'mongodb' | 'mysql' | 'sqlite';
+}
+
+// Dialog for adding new database connections with connection string input
+```
+
+#### 5. Database Tree Explorer Component
+```typescript
+interface DatabaseTreeProps {
+  connection: DatabaseConnection;
   schema: DatabaseSchema;
   selectedTable?: string;
   onTableSelect: (tableName: string) => void;
   onRefresh: () => void;
 }
 
-// Tree view for database structure navigation
+// Left sidebar tree view for database structure navigation
 ```
 
-#### 3. Query Editor Component
+#### 6. Query Editor Component
 ```typescript
 interface QueryEditorProps {
   query: string;
@@ -277,10 +311,10 @@ interface QueryEditorProps {
   syntaxHighlighting: boolean;
 }
 
-// Code editor with syntax highlighting and AI assistance
+// Right top panel - Code editor with syntax highlighting and AI assistance
 ```
 
-#### 4. Results Viewer Component
+#### 7. Results Viewer Component
 ```typescript
 interface ResultsViewerProps {
   data: QueryResult;
@@ -289,19 +323,21 @@ interface ResultsViewerProps {
   onExport: (format: string) => void;
 }
 
-// Multi-format data visualization component
+// Right bottom panel - Multi-format data visualization component
 ```
 
-#### 5. AI Chat Component
+#### 8. AI Chat Sidebar Component
 ```typescript
-interface AIChatProps {
+interface AIChatSidebarProps {
+  isOpen: boolean;
   messages: ChatMessage[];
   onSendMessage: (message: string) => void;
   isLoading: boolean;
   databaseContext: DatabaseSchema;
+  onClose: () => void;
 }
 
-// AI chatbot interface for natural language queries
+// Right sidebar AI chatbot interface for natural language queries
 ```
 
 ## Data Models
@@ -513,7 +549,7 @@ class ErrorHandler {
 
 - **Supabase/Edge Functions**: Deno test, Supabase CLI for local testing
 - **Web Frontend**: Jest, React Testing Library, Playwright
-- **Flutter**: Flutter test framework, integration_test package
+- **Electron Desktop**: Jest, React Testing Library, Electron testing utilities
 - **Load Testing**: Artillery.js for Edge Function load testing
 - **Database Testing**: Supabase local development environment
 

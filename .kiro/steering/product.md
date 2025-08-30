@@ -11,7 +11,7 @@ Database GUI Client is a multi-platform database management application with AI 
 
 ## Target Platforms
 - Web: Next.js 14 application for product showcase, signup/login, downloads, and payment management
-- Desktop: Flutter apps for Windows and macOS with full database management capabilities
+- Desktop: Electron app with React, Shadcn UI, and TailwindCSS for cross-platform database management capabilities
 - Backend: Supabase (PostgreSQL, Auth, Storage) for authentication and subscription management only
 
 ## Key Value Propositions
@@ -19,4 +19,4 @@ Database GUI Client is a multi-platform database management application with AI 
 - AI assistance for query writing and database exploration
 - Unified interface for multiple database types on desktop
 - Web-based account and subscription management
-- Cross-platform desktop consistency between Windows and macOS
+- Cross-platform desktop consistency across Windows, macOS, and Linux
