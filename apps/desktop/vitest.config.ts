@@ -8,13 +8,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/renderer/__tests__/setup.ts'],
     globals: true,
-    // React 19 compatibility
-    pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
   },
   resolve: {
     alias: {

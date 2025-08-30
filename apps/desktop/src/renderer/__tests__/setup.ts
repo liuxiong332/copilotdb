@@ -38,5 +38,5 @@ Object.defineProperty(window, 'localStorage', {
   writable: true,
 });
 
-// React 19 compatibility - suppress act warnings in tests
+// React 18 compatibility - suppress act warnings in tests
 global.IS_REACT_ACT_ENVIRONMENT = true;
