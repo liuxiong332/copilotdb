@@ -1,10 +1,23 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CustomTitleBar } from '../CustomTitleBar';
+import { AuthProvider } from '../../../contexts/AuthContext';
+import { AuthUser } from '@database-gui/types';
+
+// Wrapper component for tests
+const TestWrapper = ({ children, user = null }: { children: React.ReactNode; user?: AuthUser | null }) => (
+  <AuthProvider user={user} setUser={vi.fn()}>
+    {children}
+  </AuthProvider>
+);
 
 describe('CustomTitleBar', () => {
   it('renders all title bar elements', () => {
-    render(<CustomTitleBar />);
+    render(
+      <TestWrapper>
+        <CustomTitleBar />
+      </TestWrapper>
+    );
     
     // Check for menu button
     expect(screen.getByRole('button', { name: 'Menu' })).toBeInTheDocument();
@@ -40,7 +53,11 @@ describe('CustomTitleBar', () => {
       },
     };
 
-    render(<CustomTitleBar />);
+    render(
+      <TestWrapper>
+        <CustomTitleBar />
+      </TestWrapper>
+    );
     
     const buttons = screen.getAllByRole('button');
     
@@ -65,7 +82,11 @@ describe('CustomTitleBar', () => {
   });
 
   it('updates search query when typing', () => {
-    render(<CustomTitleBar />);
+    render(
+      <TestWrapper>
+        <CustomTitleBar />
+      </TestWrapper>
+    );
     
     const searchInput = screen.getByPlaceholderText('Search databases, tables...');
     fireEvent.change(searchInput, { target: { value: 'test query' } });
@@ -76,7 +97,11 @@ describe('CustomTitleBar', () => {
   it('handles menu and database switcher clicks', () => {
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     
-    render(<CustomTitleBar />);
+    render(
+      <TestWrapper>
+        <CustomTitleBar />
+      </TestWrapper>
+    );
     
     // Click menu button
     const menuButton = screen.getByRole('button', { name: 'Menu' });

@@ -1,14 +1,9 @@
 import { createContext, useContext, ReactNode } from 'react';
-
-// Define User type locally for now (will be properly imported from types package later)
-interface User {
-  id: string;
-  email: string;
-}
+import { AuthUser } from '@database-gui/types';
 
 interface AuthContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
   isAuthenticated: boolean;
   logout: () => void;
 }
@@ -17,8 +12,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
 }
 
 export function AuthProvider({ children, user, setUser }: AuthProviderProps) {

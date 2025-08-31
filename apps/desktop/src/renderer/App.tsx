@@ -2,15 +2,11 @@ import { useState, useEffect } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { MainLayout } from './components/layout/MainLayout';
 import { AuthDialog } from './components/auth/AuthDialog';
-
-// Define User type locally for now (will be properly imported from types package later)
-interface User {
-  id: string;
-  email: string;
-}
+import { authHelpers } from './lib/supabase';
+import { AuthUser } from '@database-gui/types';
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -20,14 +16,32 @@ function App() {
   }, []);
 
   const checkExistingSession = async () => {
+    let currentUser: AuthUser | null = null;
+    
     try {
-      // Check if user has a stored session
-      const storedSession = localStorage.getItem('supabase-session');
-      if (storedSession) {
-        const session = JSON.parse(storedSession);
-        // Validate session and set user
-        // This will be implemented in task 7.2
-        console.log('Found stored session:', session);
+      // Check for existing Supabase session
+      const { session, error } = await authHelpers.getSession();
+      
+      if (error) {
+        console.error('Error getting session:', error);
+      } else if (session?.user) {
+        // Convert Supabase user to our AuthUser type
+        const authUser: AuthUser = {
+          id: session.user.id,
+          email: session.user.email || '',
+          email_confirmed_at: session.user.email_confirmed_at,
+          phone: session.user.phone,
+          phone_confirmed_at: session.user.phone_confirmed_at,
+          created_at: session.user.created_at,
+          updated_at: session.user.updated_at,
+          last_sign_in_at: session.user.last_sign_in_at,
+          app_metadata: session.user.app_metadata,
+          user_metadata: session.user.user_metadata,
+        };
+        
+        currentUser = authUser;
+        setUser(authUser);
+        console.log('Found existing session for user:', authUser.email);
       }
     } catch (error) {
       console.error('Error checking session:', error);
@@ -37,7 +51,7 @@ function App() {
         setIsInitialized(true);
         // Show auth dialog if no user and not skipped
         const hasSkippedAuth = localStorage.getItem('auth-skipped');
-        if (!user && !hasSkippedAuth) {
+        if (!currentUser && !hasSkippedAuth) {
           setShowAuthDialog(true);
         } else {
           setShowAuthDialog(false);
@@ -46,7 +60,7 @@ function App() {
     }
   };
 
-  const handleAuthSuccess = (authenticatedUser: User) => {
+  const handleAuthSuccess = (authenticatedUser: AuthUser) => {
     setUser(authenticatedUser);
     setShowAuthDialog(false);
   };
@@ -78,7 +92,13 @@ function App() {
           user={user} 
           onSkipLogin={handleSkipAuth}
         />
- 
+        
+        <AuthDialog
+          isOpen={showAuthDialog}
+          onClose={handleAuthDialogClose}
+          onSkip={handleSkipAuth}
+          onSuccess={handleAuthSuccess}
+        />
       </div>
     </AuthProvider>
   );

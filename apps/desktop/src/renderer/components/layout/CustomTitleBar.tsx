@@ -1,30 +1,28 @@
 import { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
-
-// Define User type locally for now (will be properly imported from types package later)
-interface User {
-  id: string;
-  email: string;
-}
 import { Input } from '../ui/input';
-import { 
-  Menu, 
-  Minimize2, 
-  Maximize2, 
-  X, 
-  Database, 
-  Search, 
+import { UserProfile } from '../auth/UserProfile';
+import { AuthUser } from '@database-gui/types';
+import {
+  Menu,
+  Minimize2,
+  Maximize2,
+  X,
+  Database,
+  Search,
   MessageSquare,
-  ChevronDown 
+  ChevronDown,
+  User as UserIcon
 } from 'lucide-react';
 
 interface CustomTitleBarProps {
-  user?: User | null;
+  user?: AuthUser | null;
 }
 
 export function CustomTitleBar({ user }: CustomTitleBarProps) {
   const [isMaximized, setIsMaximized] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showUserProfile, setShowUserProfile] = useState(false);
 
   useEffect(() => {
     // Check if window is maximized on mount
@@ -78,6 +76,10 @@ export function CustomTitleBar({ user }: CustomTitleBarProps) {
     console.log('Chat toggle clicked');
   };
 
+  const handleUserProfileClick = () => {
+    setShowUserProfile(true);
+  };
+
   return (
     <div className="h-12 bg-card border-b border-border flex items-center justify-between drag-region">
       {/* Left Section - Menu and DB Switcher */}
@@ -120,8 +122,22 @@ export function CustomTitleBar({ user }: CustomTitleBarProps) {
         </div>
       </div>
 
-      {/* Right Section - Chat Button and Window Controls */}
+      {/* Right Section - User Profile, Chat Button and Window Controls */}
       <div className="flex items-center space-x-2 px-4 no-drag">
+        {/* User Profile Button */}
+        {user && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleUserProfileClick}
+            className="h-8 px-3 text-sm"
+            aria-label="User Profile"
+          >
+            <UserIcon className="h-4 w-4 mr-2" />
+            <span className="max-w-24 truncate">{user.email}</span>
+          </Button>
+        )}
+
         {/* ChatBot Trigger Button */}
         <Button
           variant="ghost"
@@ -144,7 +160,7 @@ export function CustomTitleBar({ user }: CustomTitleBarProps) {
           >
             <Minimize2 className="h-4 w-4" />
           </Button>
-          
+
           <Button
             variant="ghost"
             size="sm"
@@ -154,7 +170,7 @@ export function CustomTitleBar({ user }: CustomTitleBarProps) {
           >
             <Maximize2 className="h-4 w-4" />
           </Button>
-          
+
           <Button
             variant="ghost"
             size="sm"
@@ -166,6 +182,12 @@ export function CustomTitleBar({ user }: CustomTitleBarProps) {
           </Button>
         </div>
       </div>
+
+      {/* User Profile Dialog */}
+      <UserProfile
+        isOpen={showUserProfile}
+        onClose={() => setShowUserProfile(false)}
+      />
     </div>
   );
 }

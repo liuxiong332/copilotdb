@@ -1,13 +1,8 @@
 import { CustomTitleBar } from './CustomTitleBar';
-
-// Define User type locally for now (will be properly imported from types package later)
-interface User {
-  id: string;
-  email: string;
-}
+import { AuthUser } from '@database-gui/types';
 
 interface MainLayoutProps {
-  user?: User | null;
+  user?: AuthUser | null;
   onSkipLogin: () => void;
 }
 
