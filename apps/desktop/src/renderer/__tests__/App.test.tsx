@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
 import App from '../App';
 
 // Mock the components that aren't fully implemented yet
@@ -32,11 +31,7 @@ vi.mock('../components/auth/AuthDialog', () => ({
 }));
 
 const renderApp = () => {
-  return render(
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  );
+  return render(<App />);
 };
 
 describe('App', () => {

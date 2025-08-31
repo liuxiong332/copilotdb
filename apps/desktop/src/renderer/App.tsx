@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { MainLayout } from './components/layout/MainLayout';
 import { AuthDialog } from './components/auth/AuthDialog';
@@ -75,25 +74,11 @@ function App() {
   return (
     <AuthProvider user={user} setUser={setUser}>
       <div className="h-screen flex flex-col bg-background">
-        <Routes>
-          <Route 
-            path="/*" 
-            element={
-              <MainLayout 
-                user={user} 
-                onSkipLogin={handleSkipAuth}
-              />
-            } 
-          />
-        </Routes>
-
-        {/* Auth Dialog */}
-        <AuthDialog
-          isOpen={showAuthDialog}
-          onClose={handleAuthDialogClose}
-          onSkip={handleSkipAuth}
-          onSuccess={handleAuthSuccess}
+        <MainLayout 
+          user={user} 
+          onSkipLogin={handleSkipAuth}
         />
+ 
       </div>
     </AuthProvider>
   );
