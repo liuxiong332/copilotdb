@@ -18,7 +18,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["./src/renderer/*"],
       "@database-gui/types": ["../../packages/types/src"],
       "@database-gui/shared": ["../../packages/shared/src"]
     }
