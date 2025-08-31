@@ -11,7 +11,7 @@
         "dev:main": "npm run build:main && electron dist/main/main.js --dev",
         "dev:renderer": "vite",
         "build": "npm run build:main && npm run build:renderer",
-        "build:main": "tsc -p tsconfig.main.json",
+        "build:main": "tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json",
         "build:renderer": "vite build",
         "dist": "npm run build && electron-builder",
         "dist:win": "npm run build && electron-builder --win",

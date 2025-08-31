@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "dist/main",
     "noEmit": false,
@@ -11,10 +11,9 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "src/main/**/*"
+    "src/main/preload.ts"
   ],
   "exclude": [
-    "src/main/preload.ts",
     "src/renderer/**/*",
     "node_modules",
     "dist",
