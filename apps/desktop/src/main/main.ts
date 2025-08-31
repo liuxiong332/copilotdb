@@ -1,9 +1,8 @@
 import { app, BrowserWindow, ipcMain, safeStorage } from 'electron';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
-import { isDev } from './utils.js';
+import { isDev } from './utils';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class MainApplication {
   private mainWindow: BrowserWindow | null = null;

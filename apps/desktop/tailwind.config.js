@@ -6,7 +6,6 @@ export default {
   content: [
     './src/renderer/**/*.{ts,tsx}',
   ],
-  prefix: "",
   theme: {
     container: {
       center: true,
