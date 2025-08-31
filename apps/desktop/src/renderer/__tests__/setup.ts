@@ -39,4 +39,4 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 // React 18 compatibility - suppress act warnings in tests
-global.IS_REACT_ACT_ENVIRONMENT = true;
+(global as any).IS_REACT_ACT_ENVIRONMENT = true;

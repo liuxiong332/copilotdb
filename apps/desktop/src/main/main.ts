@@ -1,6 +1,9 @@
 import { app, BrowserWindow, ipcMain, safeStorage } from 'electron';
 import * as path from 'path';
-import { isDev } from './utils';
+import { fileURLToPath } from 'url';
+import { isDev } from './utils.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class MainApplication {
   private mainWindow: BrowserWindow | null = null;
@@ -42,7 +45,6 @@ class MainApplication {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
-        enableRemoteModule: false,
         preload: path.join(__dirname, 'preload.js'),
       },
       show: false, // Don't show until ready
