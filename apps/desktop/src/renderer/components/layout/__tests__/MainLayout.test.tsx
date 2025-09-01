@@ -13,7 +13,14 @@ vi.mock('../CustomTitleBar', () => ({
 
 describe('MainLayout', () => {
   it('renders the main layout structure', () => {
-    const mockUser = { id: '1', email: 'test@example.com' };
+    const mockUser = { 
+      id: '1', 
+      email: 'test@example.com',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+      app_metadata: {},
+      user_metadata: {}
+    };
     const mockOnSkipLogin = vi.fn();
     
     render(<MainLayout user={mockUser} onSkipLogin={mockOnSkipLogin} />);

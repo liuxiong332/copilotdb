@@ -22,7 +22,9 @@
         "db:migrate": "npx supabase db push",
         "db:generate-types": "npx supabase gen types typescript --local > packages/types/src/supabase.ts",
         "db:validate": "node scripts/validate-schema.js",
-        "test:db": "jest tests/database-setup.test.js"
+        "test:db": "jest tests/database-setup.test.js",
+        "check-deps": "check-dependency-version-consistency .",
+        "check-deps:fix": "check-dependency-version-consistency . --fix"
     },
     "devDependencies": {
         "@types/node": "^24.3.0",
@@ -37,6 +39,7 @@
         "npm": ">=8.0.0"
     },
     "dependencies": {
-        "@supabase/supabase-js": "^2.55.0"
+        "@supabase/supabase-js": "^2.55.0",
+        "check-dependency-version-consistency": "^5.0.1"
     }
 }

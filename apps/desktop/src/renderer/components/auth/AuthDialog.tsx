@@ -171,6 +171,11 @@ export function AuthDialog({ isOpen, onClose, onSkip, onSuccess }: AuthDialogPro
     }
   };
 
+  // Defensive check to ensure React is properly loaded
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md" data-testid="auth-dialog">

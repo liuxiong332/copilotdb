@@ -1,9 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 import type { SupabaseDatabase } from '@database-gui/types';
 
-// Supabase configuration
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Supabase configuration - handle different environment contexts
+const getEnvVar = (key: string, fallback: string = '') => {
+    // Check for different environment variable patterns
+    if (typeof process !== 'undefined' && process.env) {
+        return process.env[key] || process.env[`NEXT_PUBLIC_${key}`] || fallback;
+    }
+    // Fallback for browser/Vite environments
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+        return import.meta.env[`VITE_${key}`] || fallback;
+    }
+    return fallback;
+};
+
+const supabaseUrl = getEnvVar('SUPABASE_URL', 'http://localhost:54321');
+const supabaseAnonKey = getEnvVar('SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0');
 
 if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Missing Supabase environment variables');
@@ -26,7 +38,7 @@ export const supabase = createClient<SupabaseDatabase>(supabaseUrl, supabaseAnon
 // Service role client for server-side operations (use with caution)
 export const supabaseAdmin = createClient<SupabaseDatabase>(
     supabaseUrl,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+    getEnvVar('SUPABASE_SERVICE_ROLE_KEY', ''),
     {
         auth: {
             autoRefreshToken: false,
