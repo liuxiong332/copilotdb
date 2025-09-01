@@ -173,7 +173,7 @@ export function AuthDialog({ isOpen, onClose, onSkip, onSuccess }: AuthDialogPro
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" data-testid="auth-dialog">
         <DialogHeader>
           <DialogTitle>{getTitle()}</DialogTitle>
           <DialogDescription>

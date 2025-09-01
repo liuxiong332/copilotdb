@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { CustomTitleBar } from '../CustomTitleBar';
 import { AuthProvider } from '../../../contexts/AuthContext';
 import { AuthUser } from '@database-gui/types';
@@ -63,15 +63,21 @@ describe('CustomTitleBar', () => {
     
     // Find and click minimize button (should be one of the last 3 buttons)
     const minimizeButton = buttons[buttons.length - 3];
-    fireEvent.click(minimizeButton);
+    await act(async () => {
+      fireEvent.click(minimizeButton);
+    });
     
     // Find and click maximize button
     const maximizeButton = buttons[buttons.length - 2];
-    fireEvent.click(maximizeButton);
+    await act(async () => {
+      fireEvent.click(maximizeButton);
+    });
     
     // Find and click close button
     const closeButton = buttons[buttons.length - 1];
-    fireEvent.click(closeButton);
+    await act(async () => {
+      fireEvent.click(closeButton);
+    });
     
     // Wait for async calls
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -89,7 +95,9 @@ describe('CustomTitleBar', () => {
     );
     
     const searchInput = screen.getByPlaceholderText('Search databases, tables...');
-    fireEvent.change(searchInput, { target: { value: 'test query' } });
+    act(() => {
+      fireEvent.change(searchInput, { target: { value: 'test query' } });
+    });
     
     expect(searchInput).toHaveValue('test query');
   });

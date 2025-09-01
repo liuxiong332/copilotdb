@@ -17,11 +17,11 @@ function App() {
 
   const checkExistingSession = async () => {
     let currentUser: AuthUser | null = null;
-    
+
     try {
       // Check for existing Supabase session
       const { session, error } = await authHelpers.getSession();
-      
+
       if (error) {
         console.error('Error getting session:', error);
       } else if (session?.user) {
@@ -33,30 +33,29 @@ function App() {
           phone: session.user.phone,
           phone_confirmed_at: session.user.phone_confirmed_at,
           created_at: session.user.created_at,
-          updated_at: session.user.updated_at,
+          updated_at: session.user.updated_at || '',
           last_sign_in_at: session.user.last_sign_in_at,
           app_metadata: session.user.app_metadata,
           user_metadata: session.user.user_metadata,
         };
-        
+
         currentUser = authUser;
         setUser(authUser);
         console.log('Found existing session for user:', authUser.email);
       }
     } catch (error) {
       console.error('Error checking session:', error);
-    } finally {
-      // Small delay to show loading state in tests
-      setTimeout(() => {
-        setIsInitialized(true);
-        // Show auth dialog if no user and not skipped
-        const hasSkippedAuth = localStorage.getItem('auth-skipped');
-        if (!currentUser && !hasSkippedAuth) {
-          setShowAuthDialog(true);
-        } else {
-          setShowAuthDialog(false);
-        }
-      }, 100);
+    }
+
+    // Set initialization state and determine if auth dialog should show
+    setIsInitialized(true);
+
+    // Show auth dialog if no user and not skipped
+    const hasSkippedAuth = localStorage.getItem('auth-skipped');
+    if (!currentUser && !hasSkippedAuth) {
+      setShowAuthDialog(true);
+    } else {
+      setShowAuthDialog(false);
     }
   };
 
@@ -88,11 +87,11 @@ function App() {
   return (
     <AuthProvider user={user} setUser={setUser}>
       <div className="h-screen flex flex-col bg-background">
-        <MainLayout 
-          user={user} 
+        <MainLayout
+          user={user}
           onSkipLogin={handleSkipAuth}
         />
-        
+
         <AuthDialog
           isOpen={showAuthDialog}
           onClose={handleAuthDialogClose}

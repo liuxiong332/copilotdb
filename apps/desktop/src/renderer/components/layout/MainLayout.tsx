@@ -8,7 +8,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ user, onSkipLogin }: MainLayoutProps) {
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background" data-testid="main-layout">
       {/* Custom Title Bar */}
       <CustomTitleBar user={user} />
       
@@ -22,6 +22,10 @@ export function MainLayout({ user, onSkipLogin }: MainLayoutProps) {
             </h3>
             <div className="text-sm text-muted-foreground">
               Connect to a database to explore its structure
+            </div>
+            {/* User info for testing */}
+            <div className="mt-4 text-xs text-muted-foreground" data-testid="user-info">
+              User: {user ? user.email : 'No user'}
             </div>
           </div>
         </div>
