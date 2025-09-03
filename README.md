@@ -1,115 +1,154 @@
 # Database GUI Client
 
-A multi-platform database GUI client with AI assistance for MongoDB, MySQL, PostgreSQL, and SQLite databases.
-
-## Features
-
-- **Multi-Database Support**: Connect to MongoDB, MySQL, PostgreSQL, and SQLite
-- **Cross-Platform**: Web application (Next.js) and desktop apps (Flutter for Windows/macOS)
-- **AI-Powered**: Query generation and natural language database interactions
-- **Real-time**: Live query results and collaboration features
-- **Secure**: Encrypted credential storage and secure authentication
-
-## Architecture
-
-- **Backend**: Supabase (PostgreSQL, Auth, Realtime, Storage) + Edge Functions
-- **Web Client**: Next.js 14 with TypeScript, React 18, Tailwind CSS
-- **Desktop Clients**: Flutter with Dart
-- **Monorepo**: Turborepo for efficient development and builds
+Multi-platform database management application with AI assistance capabilities.
 
 ## Project Structure
 
+The project is now organized into three independent applications:
+
 ```
 database-gui-client/
-├── apps/                    # Applications
-│   ├── web/                # Next.js web application
-│   ├── desktop-windows/    # Flutter Windows app
-│   └── desktop-macos/      # Flutter macOS app
-├── packages/               # Shared packages
-│   ├── types/             # TypeScript type definitions
-│   └── shared/            # Shared utilities and constants
-├── supabase/              # Supabase configuration and migrations
-│   ├── config.toml        # Supabase configuration
-│   └── seed.sql           # Database seed data
-└── turbo.json             # Turborepo configuration
+├── backend/                 # Backend services (Supabase configuration and migrations)
+├── apps/
+│   ├── desktop/            # Electron desktop application
+│   └── web/                # Next.js web application
+├── scripts/                # Build and setup scripts
+└── docs/                   # Documentation
 ```
 
-## Getting Started
+## Applications
+
+### Backend (`backend/`)
+- **Purpose**: Supabase configuration, database migrations, and type generation
+- **Technology**: Supabase CLI, PostgreSQL
+- **Scope**: Authentication and payment management only
+
+### Desktop App (`apps/desktop/`)
+- **Purpose**: Full database management with AI assistance
+- **Technology**: Electron, React 18, TypeScript, Tailwind CSS, Shadcn UI
+- **Features**: 
+  - Multi-database support (MongoDB, MySQL, PostgreSQL, SQLite)
+  - AI-powered query generation (OpenAI integration)
+  - Local database connections without cloud intermediary
+  - Cross-platform (Windows, macOS, Linux)
+
+### Web App (`apps/web/`)
+- **Purpose**: Product showcase, authentication, and account management
+- **Technology**: Next.js 14, React 18, TypeScript, Tailwind CSS
+- **Features**:
+  - Product marketing and showcase
+  - User registration and authentication
+  - Subscription and payment management
+  - Desktop app downloads
+
+## Development Setup
 
 ### Prerequisites
-
-- Node.js 18+
-- npm 8+
-- Supabase CLI (for local development)
-- Flutter SDK (for desktop apps)
+- Node.js >= 18.0.0
+- npm >= 8.0.0
 
 ### Installation
-
-1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd database-gui-client
+# Install dependencies for all applications
+npm run install:all
+
+# Or install individually
+cd backend && npm install
+cd apps/web && npm install
+cd apps/desktop && npm install
 ```
 
-2. Install dependencies:
+### Development Commands
+
+#### Backend Development
 ```bash
-npm install
+cd backend
+npm run db:start          # Start local Supabase
+npm run db:stop           # Stop local Supabase
+npm run db:status         # Check Supabase status
+npm run db:reset          # Reset database to initial state
+npm run db:migrate        # Push migrations to Supabase
+npm run db:generate-types # Generate TypeScript types and sync to apps
+npm run test              # Run backend tests
 ```
 
-3. Set up environment variables:
+#### Web Development
 ```bash
-cp .env.local.example .env.local
-# Edit .env.local with your configuration
+cd apps/web
+npm run dev               # Start development server
+npm run build             # Build for production
+npm run start             # Start production server
+npm run test              # Run tests
+npm run lint              # Lint code
 ```
 
-4. Start Supabase locally:
+#### Desktop Development
 ```bash
-supabase start
+cd apps/desktop
+npm run dev               # Start Electron app in development
+npm run build             # Build for production
+npm run dist              # Package for distribution
+npm run dist:win          # Package for Windows
+npm run dist:mac          # Package for macOS
+npm run dist:linux        # Package for Linux
+npm run test              # Run tests
+npm run lint              # Lint code
 ```
 
-5. Start development servers:
+#### Root Level Commands
 ```bash
-npm run dev
+# Development
+npm run dev:web           # Start web app
+npm run dev:desktop       # Start desktop app
+npm run dev:backend       # Start backend services
+
+# Building
+npm run build:web         # Build web app
+npm run build:desktop     # Build desktop app
+
+# Testing
+npm run test:web          # Test web app
+npm run test:desktop      # Test desktop app
+npm run test:backend      # Test backend
+
+# Linting
+npm run lint:web          # Lint web app
+npm run lint:desktop      # Lint desktop app
+
+# Utilities
+npm run clean:all         # Clean all build artifacts
 ```
 
-## Development
+## Type Management
 
-### Available Scripts
+Each application now has its own copy of TypeScript types in `src/types/`:
+- **Backend**: Contains Supabase-generated types and auth-related types
+- **Desktop**: Contains all types including database, AI, and UI types
+- **Web**: Contains types for authentication, payments, and web-specific features
 
-- `npm run dev` - Start all development servers
-- `npm run build` - Build all applications
-- `npm run test` - Run all tests
-- `npm run lint` - Lint all code
-- `npm run type-check` - Type check all TypeScript code
-- `npm run clean` - Clean all build artifacts
+When Supabase schema changes, run `npm run db:generate-types` in the backend directory to update types across all applications.
 
-### Packages
+## Key Benefits of This Structure
 
-#### @database-gui/types
-Shared TypeScript type definitions for all applications.
+1. **No Dependency Conflicts**: Each app manages its own dependencies independently
+2. **Simplified Development**: No complex workspace configuration or shared package management
+3. **Independent Deployment**: Each application can be built and deployed separately
+4. **Clear Separation**: Backend, desktop, and web concerns are completely separated
+5. **Type Safety**: Each app has its own type definitions without cross-dependencies
 
-#### @database-gui/shared
-Shared utilities, constants, and helper functions.
+## Technology Stack
 
-## Environment Variables
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Desktop**: Electron, React 18, TypeScript, Tailwind CSS, Shadcn UI
+- **Web**: Next.js 14, React 18, TypeScript, Tailwind CSS
+- **Database Clients**: Native drivers (mongodb, mysql2, sqlite3) in Electron
+- **AI Integration**: OpenAI API (desktop only)
+- **Payment Processing**: Paddle API integrated with Supabase
+- **Testing**: Vitest (desktop), Jest (web/backend), Playwright (E2E)
 
-See `.env.local.example` for required environment variables:
+## Environment Configuration
 
-- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
-- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
-- `OPENAI_API_KEY` - OpenAI API key for AI features
-- `PADDLE_API_KEY` - Paddle API key for payments
-- `PADDLE_WEBHOOK_SECRET` - Paddle webhook secret for payment verification
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
+Each application has its own environment configuration:
+- `backend/.env` - Supabase configuration
+- `apps/web/.env.local` - Web app configuration
+- `apps/desktop/.env.local` - Desktop app configuration

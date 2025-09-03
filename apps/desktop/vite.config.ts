@@ -14,8 +14,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src/renderer'),
-      '@database-gui/types': path.resolve(__dirname, '../../packages/types/src'),
-      '@database-gui/shared': path.resolve(__dirname, '../../packages/shared/src'),
+      '@/types': path.resolve(__dirname, './src/types'),
     },
   },
   server: {

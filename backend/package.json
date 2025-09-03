@@ -1,0 +1,31 @@
+{
+  "name": "database-gui-backend",
+  "version": "1.0.0",
+  "description": "Backend services for Database GUI Client - Supabase configuration and migrations",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:setup": "../scripts/setup-database.sh",
+    "db:start": "npx supabase start",
+    "db:stop": "npx supabase stop",
+    "db:status": "npx supabase status",
+    "db:reset": "npx supabase db reset",
+    "db:migrate": "npx supabase db push",
+    "db:generate-types": "npx supabase gen types typescript --local > types/supabase.ts && copy types\\supabase.ts ..\\apps\\web\\src\\types\\ && copy types\\supabase.ts ..\\apps\\desktop\\src\\types\\",
+    "db:validate": "node ../scripts/validate-schema.js",
+    "test": "jest database-setup.test.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "jest": "^30.0.5",
+    "supabase": "^2.34.3",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.55.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

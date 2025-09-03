@@ -1,0 +1,26 @@
+// Core types (database types moved to Flutter desktop clients)
+export * from './connection';
+export * from './query';
+export * from './schema';
+
+// AI service types
+export * from './ai';
+
+// User and authentication types
+export * from './user';
+export * from './auth';
+
+// Payment and subscription types
+export * from './payment';
+
+// Download and version management types
+export * from './download';
+
+// UI and component types
+export * from './ui';
+
+// API response types
+export * from './api';
+
+// Supabase generated types
+export type { Database as SupabaseDatabase } from './supabase';

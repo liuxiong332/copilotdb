@@ -1,5 +1,5 @@
 import { createClient } from './supabase'
-import { Payment, SubscriptionPlan } from '@database-gui/types'
+import { Payment, SubscriptionPlan } from '../types'
 
 // Initialize Paddle
 declare global {

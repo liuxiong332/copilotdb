@@ -1,5 +1,5 @@
 import { createClient } from './supabase'
-import { UserProfile, UsageStats, Payment } from '@database-gui/types'
+import { UserProfile, UsageStats, Payment } from '../types'
 
 export class DashboardService {
     private supabase = createClient()

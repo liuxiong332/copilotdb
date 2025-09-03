@@ -1,45 +1,24 @@
 {
     "name": "database-gui-client",
     "version": "1.0.0",
-    "description": "Multi-platform database GUI client - web showcase and desktop applications",
+    "description": "Multi-platform database GUI client - backend, web showcase and desktop applications",
     "private": true,
-    "workspaces": [
-        "packages/*",
-        "apps/*"
-    ],
     "scripts": {
-        "dev": "turbo run dev",
-        "build": "turbo run build",
-        "test": "turbo run test",
-        "lint": "turbo run lint",
-        "type-check": "turbo run type-check",
-        "clean": "turbo run clean",
-        "db:setup": "./scripts/setup-database.sh",
-        "db:start": "npx supabase start",
-        "db:stop": "npx supabase stop",
-        "db:status": "npx supabase status",
-        "db:reset": "npx supabase db reset",
-        "db:migrate": "npx supabase db push",
-        "db:generate-types": "npx supabase gen types typescript --local > packages/types/src/supabase.ts",
-        "db:validate": "node scripts/validate-schema.js",
-        "test:db": "jest tests/database-setup.test.js",
-        "check-deps": "check-dependency-version-consistency .",
-        "check-deps:fix": "check-dependency-version-consistency . --fix"
-    },
-    "devDependencies": {
-        "@types/node": "^24.3.0",
-        "jest": "^30.0.5",
-        "supabase": "^2.34.3",
-        "turbo": "^1.13.4",
-        "typescript": "^5.9.2",
-        "vitest": "^3.2.4"
+        "dev:web": "cd apps/web && npm run dev",
+        "dev:desktop": "cd apps/desktop && npm run dev",
+        "dev:backend": "cd backend && npm run db:start",
+        "build:web": "cd apps/web && npm run build",
+        "build:desktop": "cd apps/desktop && npm run build",
+        "test:web": "cd apps/web && npm run test",
+        "test:desktop": "cd apps/desktop && npm run test",
+        "test:backend": "cd backend && npm run test",
+        "lint:web": "cd apps/web && npm run lint",
+        "lint:desktop": "cd apps/desktop && npm run lint",
+        "install:all": "node scripts/install-all.js",
+        "clean:all": "cd apps/web && npm run clean 2>nul || echo 'No clean script' && cd ../desktop && npm run clean 2>nul || echo 'No clean script' && cd ../../backend && npm run clean 2>nul || echo 'No clean script'"
     },
     "engines": {
         "node": ">=18.0.0",
         "npm": ">=8.0.0"
-    },
-    "dependencies": {
-        "@supabase/supabase-js": "^2.55.0",
-        "check-dependency-version-consistency": "^5.0.1"
     }
 }
